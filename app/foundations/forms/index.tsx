@@ -1,13 +1,21 @@
+import { useForm } from "react-hook-form";
 import { Button, TextField } from "@mui/material";
 
 type Props = {
   fields: any
+  action: any
 }
 
+type FormData = {
+  [key:string]:string
+}
+
+
 const FormComponent = (props: Props) => {
-  const { fields } = props;
+  const { register, handleSubmit } = useForm<FormData>();
+  const { fields, action } = props;
   return (
-    <form className="flex flex-col">
+    <form className="flex flex-col" onSubmit={handleSubmit(action)}>
       {
         fields.map((field:any) => (
           <TextField
@@ -17,6 +25,7 @@ const FormComponent = (props: Props) => {
             type={field.type}
             required={field.required}
             className="mt-2"
+            {...register(field.fieldName)}
           />
         ))
       }

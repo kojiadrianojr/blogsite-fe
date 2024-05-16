@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import FormComponent from "@/app/foundations/forms";
 import { FormModel } from "@/app/foundations/forms/index.model";
@@ -18,6 +20,9 @@ const FIELDS = [
 ];
 
 const LoginPage = () => {
+  const handleAction = (payload:any) => {
+    console.log(payload);
+  }
   return (
     <Paper className="p-4" square>
       <Typography variant="h5">Login Page</Typography>
@@ -27,7 +32,7 @@ const LoginPage = () => {
           Register here
         </Link>
       </Typography>
-      <FormComponent {...FormModel.getProps({ fields: FIELDS })} />
+      <FormComponent {...FormModel.getProps({ fields: FIELDS, action: handleAction})} />
     </Paper>
   );
 };
