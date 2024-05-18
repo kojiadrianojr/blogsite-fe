@@ -39,14 +39,28 @@ const register = async (payload: {
   username: string;
   password: string;
 }) => {
+  const url = `${API_URL}/auth/users/`;
   try {
-    const res = await fetch(API_URL, {
+    const res = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
     });
+    if (res.ok) {
+      return {
+        result: await res.json(),
+        status: res.status,
+        ok: res.ok,
+      };
+    }
+
+    return {
+      result: await res.json(),
+      status: res.status,
+      ok: res.ok,
+    };
   } catch (e) {
     console.error(e);
   }
@@ -62,7 +76,7 @@ const login = async (payload: { username: string; password: string }) => {
         "Content-Type": "application/json",
       },
     });
-    if (res.status === 200) {
+    if (res.ok) {
       return res.json();
     }
     return Promise.reject(res);
