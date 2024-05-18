@@ -3,7 +3,7 @@
 import React from "react";
 import FormComponent from "@/app/foundations/forms";
 import { FormModel } from "@/app/foundations/forms/index.model";
-import { Paper, Typography } from "@mui/material";
+import { Container, Paper, Typography } from "@mui/material";
 import Link from "next/link";
 
 const FIELDS = [
@@ -24,7 +24,14 @@ const LoginPage = () => {
     console.log(payload);
   }
   return (
-    <Paper className="p-4" square>
+    <Container className="flex items-center justify-center h-screen" sx={{border: '1px solid red'}}>
+    <Paper className="p-4" square sx={{
+      width: {
+        xs: '100%',
+        sm: 500,
+      },
+      border: '1px solid red'
+    }}>
       <Typography variant="h5">Login Page</Typography>
       <Typography variant="body1">
         New user? &nbsp;
@@ -34,6 +41,7 @@ const LoginPage = () => {
       </Typography>
       <FormComponent {...FormModel.getProps({ fields: FIELDS, action: handleAction})} />
     </Paper>
+    </Container>
   );
 };
 
