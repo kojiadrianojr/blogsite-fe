@@ -2,19 +2,21 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { protectedRoutes, authRoutes } from "./app/config";
+import { isValidToken } from "./app/lib/verifyToken";
 
 export function middleware(request: NextRequest) {
   const cookieStore = cookies();
   const accessToken = cookieStore.get("accessToken");
+  const refreshToken = cookieStore.get("refreshToken")
+  const isAccessTokenValid = isValidToken(accessToken?.value);
+  const isRefreshTokenValid = isValidToken(refreshToken?.value);
+  
 
-  // if (!accessToken && !request.nextUrl.pathname.startsWith('/auth')) {
-  //   return NextResponse.redirect(new URL("/auth/login", request.url));
-  // }
-  if (protectedRoutes.includes(request.nextUrl.pathname) && !accessToken) {
+  if (protectedRoutes.includes(request.nextUrl.pathname) && (isAccessTokenValid === false && isRefreshTokenValid == false)) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
-  if (authRoutes.includes(request.nextUrl.pathname) && accessToken) {
+  if (authRoutes.includes(request.nextUrl.pathname) && (isAccessTokenValid === true || isRefreshTokenValid === true)) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

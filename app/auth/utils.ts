@@ -30,6 +30,25 @@ const removeTokens = (): void => {
   Cookies.remove("refreshToken");
 };
 
+const handleJWTrefresh = async() => {
+  const refreshToken = getToken("refresh");
+  const url = `${API_URL}/auth/jwt/refresh`;
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type":"application/json",
+      },
+      body: JSON.stringify({
+        refresh: refreshToken
+      })
+    })
+    return res.json();
+  } catch(e) {
+    console.error(e);
+  }
+}
+
 /**
  * Function for user authentication
  */
@@ -90,6 +109,7 @@ export default function authActions() {
     storeToken,
     getToken,
     removeTokens,
+    handleJWTrefresh,
     register,
     login,
   };
