@@ -9,6 +9,7 @@ import useAuth, {
   AuthContextProvider,
 } from "@/app/lib/auth/AuthContextProvider";
 import authActions from "../utils";
+import { useRouter } from "next/navigation";
 
 type Field = {
   fieldName: string;
@@ -32,12 +33,14 @@ const FIELDS: Field[] = [
 const LoginPage = () => {
   const auth = useAuth();
   const { login, storeToken } = authActions();
+  const router = useRouter();
 
   const handleAction = (payload: any) => {
     login(payload)
       .then((res) => {
         storeToken(res.access, "access");
         storeToken(res.refresh, "refresh");
+        router.push("/");
         console.log("User successfully logged in...");
       })
       .catch((e) => {
