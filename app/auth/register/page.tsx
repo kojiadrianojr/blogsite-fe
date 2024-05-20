@@ -11,6 +11,7 @@ import useAuth, {
 import authActions from "../utils";
 import { useRouter } from "next/navigation";
 import RegisterImage from "@/public/register.svg";
+import NoSSR from "@/app/NoSSR";
 
 type Field = {
   fieldName: string;
@@ -57,34 +58,35 @@ const RegisterPage = () => {
 
   return (
     <Container className="flex items-center justify-center h-screen">
-      <Paper
-        className="p-5"
-        square
-        sx={{
-          width: {
-            xs: "100%",
-            sm: 500,
-          },
-        }}
-      >
-        <img
-          src={RegisterImage.src}
-          alt="login image"
-          style={{ width: "100%", height: "auto" }}
-          className="pb-4"
-        
-        />
-        <Typography variant="h5">Registration Page</Typography>
-        <Typography variant="body1">
-          Already a member? &nbsp;
-          <Link href="/auth/login" className="text-sky-400">
-            Login here
-          </Link>
-        </Typography>
-        <FormComponent
-          {...FormModel.getProps({ fields: FIELDS, action: handleAction })}
-        />
-      </Paper>
+      <NoSSR>
+        <Paper
+          className="p-5"
+          square
+          sx={{
+            width: {
+              xs: "100%",
+              sm: 500,
+            },
+          }}
+        >
+          <img
+            src={RegisterImage.src}
+            alt="login image"
+            style={{ width: "100%", height: "auto" }}
+            className="pb-4"
+          />
+          <Typography variant="h5">Registration Page</Typography>
+          <Typography variant="body1">
+            Already a member? &nbsp;
+            <Link href="/auth/login" className="text-sky-400">
+              Login here
+            </Link>
+          </Typography>
+          <FormComponent
+            {...FormModel.getProps({ fields: FIELDS, action: handleAction })}
+          />
+        </Paper>
+      </NoSSR>
     </Container>
   );
 };
