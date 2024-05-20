@@ -10,6 +10,7 @@ import useAuth, {
 } from "@/app/lib/auth/AuthContextProvider";
 import authActions from "../utils";
 import { useRouter } from "next/navigation";
+import LoginImage from "@/public/login.svg";
 
 type Field = {
   fieldName: string;
@@ -47,6 +48,7 @@ const LoginPage = () => {
         console.error({ status: e.status, msg: e.statusText });
       });
   };
+
   return (
     <Container className="flex items-center justify-center h-screen">
       <Paper
@@ -59,11 +61,17 @@ const LoginPage = () => {
           },
         }}
       >
-        <Typography variant="h5">Login Page</Typography>
+        <img
+          src={LoginImage.src}
+          alt="login image"
+          style={{ width: "100%", height: "auto" }}
+          className="pb-4"
+        />
+        <Typography variant="h5">Sign in</Typography>
         <Typography variant="body1">
-          New user? &nbsp;
+          Interested? &nbsp;
           <Link href="/auth/register" className="text-sky-400">
-            Register here
+            Join here!
           </Link>
         </Typography>
         <FormComponent

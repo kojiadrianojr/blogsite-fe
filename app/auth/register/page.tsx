@@ -10,6 +10,7 @@ import useAuth, {
 } from "@/app/lib/auth/AuthContextProvider";
 import authActions from "../utils";
 import { useRouter } from "next/navigation";
+import RegisterImage from "@/public/register.svg";
 
 type Field = {
   fieldName: string;
@@ -66,9 +67,16 @@ const RegisterPage = () => {
           },
         }}
       >
+        <img
+          src={RegisterImage.src}
+          alt="login image"
+          style={{ width: "100%", height: "auto" }}
+          className="pb-4"
+        
+        />
         <Typography variant="h5">Registration Page</Typography>
         <Typography variant="body1">
-          Already have an account? &nbsp;
+          Already a member? &nbsp;
           <Link href="/auth/login" className="text-sky-400">
             Login here
           </Link>
