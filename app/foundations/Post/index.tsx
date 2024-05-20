@@ -21,14 +21,13 @@ const Component = (props: Props) => {
   const { title, description, created, owner } = props;
   // Match the 'owner'Id from the 'users' list;
   const { data: author } = useSWR(`/auth/users/${owner}`, fetcher);
-  const isCurrUser = author === currUser.username;  
-
+  const isCurrUser = author?.username  === currUser?.username;
   return (
-    <Card sx={{ p: { xs: 0, md: 3 } }}>
+    <Card sx={{ p: { xs: 0, md: 3 }, height: '100%'}} >
       <CardHeader
         title={title}
         titleTypographyProps={{
-          variant: isNew ? "h3" : "h5",
+          variant: isNew ? "h4" : "h5",
         }}
         subheader={author?.username ?? owner}
       />
