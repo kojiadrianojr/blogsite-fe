@@ -9,33 +9,31 @@ import { Props as LatestPostProps } from "@/app/foundations/Post/index.d";
 import { compareDates } from "@/app/lib/hooks";
 import useData from "@/app/lib/data/DataContextProvider";
 
-const RenderNewPost = (props: LatestPostProps) => {
-  return <Post {...PostModel.getProps(props)} />;
-};
-
 const Posts = () => {
   const { posts } = useData();
-  const latest = useMemo(
-    () => posts.sort(compareDates)[posts.length - 1],
-    [posts]
-  );
+  const latest = useMemo(() => {
+    if (!posts) return;
+    return posts.sort(compareDates)[posts.length - 1];
+  }, [posts]);
   const postsToDisplay = useMemo(
     () => posts.filter((p) => p !== latest),
     [posts]
   );
   return (
     <>
-      <Box
-        mb={4}
-        sx={{
-          height: {
-            xs: "50vh",
-            md: "auto",
-          },
-        }}
-      >
-        <RenderNewPost {...latest} isNew />
-      </Box>
+      {latest && (
+        <Box
+          mb={4}
+          sx={{
+            height: {
+              xs: "50vh",
+              md: "auto",
+            },
+          }}
+        >
+          <Post {...PostModel.getProps(latest)} isNew />
+        </Box>
+      )}
       <Grid
         container
         spacing={{

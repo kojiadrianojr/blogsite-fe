@@ -6,6 +6,7 @@ import {
   Container,
   Divider,
   IconButton,
+  ListItemIcon,
   Menu,
   MenuItem,
   Toolbar,
@@ -13,7 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { PersonRounded, SendRounded } from "@mui/icons-material";
+import { Logout, PersonRounded, SendRounded } from "@mui/icons-material";
 import authActions from "@/app/auth/utils";
 import { useRouter } from "next/navigation";
 
@@ -82,8 +83,11 @@ const Component = () => {
                 horizontal: "right",
               }}
             >
-              <MenuItem>
-                <Button onClick={handleLogout} color="error">Disconnect</Button>
+              <MenuItem onClick={handleLogout}>
+                <ListItemIcon>
+                  <Logout fontSize="small" />
+                </ListItemIcon>
+                Logout
               </MenuItem>
             </Menu>
           </Box>
