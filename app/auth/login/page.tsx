@@ -78,7 +78,7 @@ const LoginPage = () => {
             </Link>
           </Typography>
           <FormComponent
-            {...FormModel.getProps({ fields: FIELDS, action: handleAction })}
+            {...FormModel.getProps({type:'Login', fields: FIELDS, action: handleAction })}
           />
         </Paper>
       </NoSSR>

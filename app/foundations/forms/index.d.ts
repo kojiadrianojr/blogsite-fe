@@ -4,6 +4,7 @@ export type Field = {
   type: string;
 }
 export type Props = {
+  type?: string,
   fields: Field[]
   action: any;
 }

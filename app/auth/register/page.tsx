@@ -83,7 +83,11 @@ const RegisterPage = () => {
             </Link>
           </Typography>
           <FormComponent
-            {...FormModel.getProps({ fields: FIELDS, action: handleAction })}
+            {...FormModel.getProps({
+              type: "Register",
+              fields: FIELDS,
+              action: handleAction,
+            })}
           />
         </Paper>
       </NoSSR>
