@@ -104,6 +104,22 @@ const login = async (payload: { username: string; password: string }) => {
   }
 };
 
+const logout = async () => {
+  const refreshToken = getToken("refresh");
+  const url = `${API_URL}/auth/logout/`;
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify({refresh: refreshToken}),
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 export default function authActions() {
   return {
     storeToken,
@@ -112,5 +128,6 @@ export default function authActions() {
     handleJWTrefresh,
     register,
     login,
+    logout,
   };
 }
