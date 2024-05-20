@@ -13,11 +13,10 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import useSWR from "swr";
-import { fetcher } from "@/app/lib/fetcher";
 import { PersonRounded, SendRounded } from "@mui/icons-material";
 import authActions from "@/app/auth/utils";
 import { useRouter } from "next/navigation";
+
 
 const Component = () => {
   const router = useRouter();
@@ -34,7 +33,6 @@ const Component = () => {
     setAnchorElUser(null);
   };
 
-  // const { data: user } = useSWR("/auth/users/me", fetcher);
 
   const handleLogout = () => {
     logout().then((res) => {
@@ -45,7 +43,7 @@ const Component = () => {
   }
 
   return (
-    <AppBar color="transparent">
+    <AppBar color="transparent" position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <SendRounded sx={{ mr: 1 }} />
@@ -68,7 +66,7 @@ const Component = () => {
           </Typography>
           {/* Render mobile view  */}
           <Box>
-            <Tooltip title="user settings">
+            <Tooltip title="user menu">
               <IconButton onClick={handleOpenUserMenu}>
                 <PersonRounded />
               </IconButton>
