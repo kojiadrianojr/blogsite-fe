@@ -13,33 +13,33 @@ import React from "react";
 import { Props } from "./index.d";
 import useSWR from "swr";
 import { fetcher } from "@/app/lib/fetcher";
+import useAuth from "@/app/lib/auth/AuthContextProvider";
 
 const Component = (props: Props) => {
+  const { currUser } = useAuth();
   const isNew = props?.isNew;
-  const { title, description, dateCreated, owner } = props;
-
+  const { title, description, created, owner } = props;
   // Match the 'owner'Id from the 'users' list;
   const { data: author } = useSWR(`/auth/users/${owner}`, fetcher);
+  const isCurrUser = author === currUser.username;  
 
   return (
     <Card sx={{ p: { xs: 0, md: 3 } }}>
       <CardHeader
         title={title}
-        titleTypographyProps={
-          {
-            variant: isNew ? "h3" : "h5",
-          }
-        }
+        titleTypographyProps={{
+          variant: isNew ? "h3" : "h5",
+        }}
         subheader={author?.username ?? owner}
       />
       <CardContent>
         <Typography color="text.secondary" variant="body2">
-          {dateCreated}
+          {created}
         </Typography>
         <Typography variant={isNew ? "h5" : "body1"}>{description}</Typography>
       </CardContent>
       <CardActions disableSpacing>
-        {!isNew && (
+        {!isNew && isCurrUser && (
           <Box className="w-full">
             <IconButton aria-label="edit post">
               <ModeEditRounded />

@@ -1,22 +1,31 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import useSWR from "swr";
+import { fetcher } from "../fetcher";
 
-type Props = {
-  isAuth: boolean;
-  token: string;
+type AuthContextProps = {
+  currUser: any | null;
 };
 
-const initialState: Props = {
-  isAuth: false,
-  token: "",
+const initialState: AuthContextProps = {
+  currUser: null,
 };
 
-export const AuthContext = createContext<Props>(initialState);
+export const AuthContext = createContext<AuthContextProps>(initialState);
 export const AuthContextProvider = ({ children }: { children: any }) => {
+  const { data: user } = useSWR('/auth/users/me', fetcher);
   const [isAuth, setIsAuth] = useState<boolean>(false);
-  const [token, setToken] = useState<string>("");
+  const [currUser, setCurrUser] = useState<any|null>(null);
+
+  useEffect(() => {
+    if (user) {
+      setCurrUser(user)
+    } else {
+      setCurrUser(null) // Clear current user data
+    }
+  }, [user])
 
   return (
-    <AuthContext.Provider value={{ isAuth, token }}>
+    <AuthContext.Provider value={{ currUser }}>
       {children}
     </AuthContext.Provider>
   );

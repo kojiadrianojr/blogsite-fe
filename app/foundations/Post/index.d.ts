@@ -1,12 +1,4 @@
-type ID = number;
-
-export type PostProps = {
-  id: ID;
-  owner: string;
-  title: string;
-  description: string;
-  dateCreated: string;
-};
+import { PostProps } from "@/app/lib/data/DataContextProvider";
 
 export interface Props extends PostProps {
   isNew?: boolean;

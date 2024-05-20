@@ -4,7 +4,9 @@ import { Box, Grid, Typography } from "@mui/material";
 import useSWR from "swr";
 import { fetcher } from "@/app/lib/fetcher";
 import { PostModel } from "@/app/foundations/Post/index.model";
-import { PostProps } from "@/app/foundations/Post/index.d";
+import { PostProps } from "@/app/lib/data/DataContextProvider";
+import { compareDates } from "@/app/lib/hooks";
+import useData from "@/app/lib/data/DataContextProvider";
 
 const RenderNewPost = (props: PostProps) => {
   return (
@@ -15,8 +17,7 @@ const RenderNewPost = (props: PostProps) => {
 };
 
 const Posts = () => {
-  const { data: posts } = useSWR("/api/blog", fetcher);
-
+  const { posts } = useData();
   return (
     <>
       {/* <RenderNewPost /> */}

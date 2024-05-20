@@ -5,14 +5,10 @@ import FormComponent from "@/app/foundations/forms";
 import { FormModel } from "@/app/foundations/forms/index.model";
 import { Container, Paper, Typography } from "@mui/material";
 import Link from "next/link";
-import useAuth, {
-  AuthContextProvider,
-} from "@/app/lib/auth/AuthContextProvider";
 import authActions from "../utils";
 import { useRouter } from "next/navigation";
 import LoginImage from "@/public/login.svg";
-import dynamic from "next/dynamic";
-import NoSSR from "@/app/NoSSR";
+import NoSSR from "@/app/lib/NoSsr";
 
 type Field = {
   fieldName: string;
@@ -34,7 +30,6 @@ const FIELDS: Field[] = [
 ];
 
 const LoginPage = () => {
-  const auth = useAuth();
   const { login, storeToken } = authActions();
   const router = useRouter();
 
@@ -78,7 +73,11 @@ const LoginPage = () => {
             </Link>
           </Typography>
           <FormComponent
-            {...FormModel.getProps({type:'Login', fields: FIELDS, action: handleAction })}
+            {...FormModel.getProps({
+              type: "Login",
+              fields: FIELDS,
+              action: handleAction,
+            })}
           />
         </Paper>
       </NoSSR>
@@ -87,9 +86,5 @@ const LoginPage = () => {
 };
 
 export default function RenderPage() {
-  return (
-    <AuthContextProvider>
-      <LoginPage />
-    </AuthContextProvider>
-  );
+  return <LoginPage />;
 }

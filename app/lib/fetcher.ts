@@ -1,10 +1,17 @@
 import authActions from "../auth/utils";
 import { API_URL } from "../config";
+import { isValidToken } from "./verifyToken";
 
 const { handleJWTrefresh, storeToken, getToken } = authActions();
 export const fetcher = (url: string) => {
   const urlLink: string = `${API_URL}${url}`;
   const bearer: string = `Bearer ${getToken("access")}`;
+
+  // Check for refresh token;
+  if (isValidToken(getToken('refresh')) === false) {
+    return Promise.reject('No Refresh token found');
+  }
+  
   return fetch(urlLink, {
     method: "GET",
     headers: {

@@ -3,15 +3,15 @@ import moment from "moment";
 
 export class PostModel {
   static getProps(props: Props): Props {
-    const { id, owner, title, description, isNew, dateCreated } = props;
-    const modifiedDate = moment(dateCreated).calendar();
+    const { id, owner, title, description, isNew, created } = props;
+    const modifiedDate = moment(created).calendar();
     return {
       id,
       owner,
       title,
       description,
       isNew,
-      dateCreated: modifiedDate,
+      created: modifiedDate,
     };
   }
 }
