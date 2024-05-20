@@ -10,27 +10,33 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-
-type Props = {
-  isNew?: boolean;
-};
+import { Props } from "./index.d";
+import useSWR from "swr";
+import { fetcher } from "@/app/lib/fetcher";
 
 const Component = (props: Props) => {
   const isNew = props?.isNew;
+  const { title, description, dateCreated, owner } = props;
+
+  // Match the 'owner'Id from the 'users' list;
+  const { data: author } = useSWR(`/auth/users/${owner}`, fetcher);
+
   return (
     <Card sx={{ p: { xs: 0, md: 3 } }}>
       <CardHeader
-        title="Title "
+        title={title}
         titleTypographyProps={
-          isNew && {
-            variant: "h3",
+          {
+            variant: isNew ? "h3" : "h5",
           }
         }
-        subheader="name"
+        subheader={author?.username ?? owner}
       />
       <CardContent>
-        <Typography color="text.secondary" variant="body2">20/05/2024</Typography>
-        <Typography variant={isNew ? "h5" : "body1"}>Description</Typography>
+        <Typography color="text.secondary" variant="body2">
+          {dateCreated}
+        </Typography>
+        <Typography variant={isNew ? "h5" : "body1"}>{description}</Typography>
       </CardContent>
       <CardActions disableSpacing>
         {!isNew && (
