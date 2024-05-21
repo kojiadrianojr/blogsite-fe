@@ -6,7 +6,7 @@ import { fetcher } from "@/app/lib/fetcher";
 import { PostModel } from "@/app/foundations/Post/index.model";
 import { PostProps } from "@/app/lib/data/DataContextProvider";
 import { Props as LatestPostProps } from "@/app/foundations/Post/index.d";
-import { compareDates } from "@/app/lib/hooks";
+import { compareDates } from "@/app/lib/utils";
 import useData from "@/app/lib/data/DataContextProvider";
 
 const Posts = () => {
@@ -25,8 +25,8 @@ const Posts = () => {
         <Box
           mb={4}
           sx={{
-            height: {
-              xs: "50vh",
+            minHeight: {
+              xs: "30vh",
               md: "auto",
             },
           }}
