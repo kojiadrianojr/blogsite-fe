@@ -28,8 +28,6 @@ const Page = ({ params }: { params: any }) => {
     };
   }, [posts]);
 
-  console.log(payload);
-
   return (
     <Container maxWidth="sm" className="p-4">
       <Typography>Editting your post, {currUser?.username}!</Typography>
