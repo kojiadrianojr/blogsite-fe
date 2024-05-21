@@ -1,10 +1,12 @@
 import { useForm } from "react-hook-form";
 import { Button, TextField } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 type Props = {
   fields: any;
   action: any;
   type?: string;
+  isLoading?: boolean;
 };
 
 type FormData = {
@@ -13,7 +15,7 @@ type FormData = {
 
 const FormComponent = (props: Props) => {
   const { register, handleSubmit } = useForm<FormData>();
-  const { fields, action } = props;
+  const { fields, action, isLoading } = props;
   const formType = props.type ?? "Submit";
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(action)}>
@@ -28,9 +30,15 @@ const FormComponent = (props: Props) => {
           {...register(field.fieldName)}
         />
       ))}
-      <Button type="submit" className="mt-4" variant="contained">
+
+      <LoadingButton
+        loading={isLoading}
+        type="submit"
+        className="mt-4"
+        variant="contained"
+      >
         {formType}
-      </Button>
+      </LoadingButton>
     </form>
   );
 };

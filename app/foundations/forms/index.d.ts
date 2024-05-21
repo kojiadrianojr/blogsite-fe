@@ -5,6 +5,7 @@ export type Field = {
 }
 export type Props = {
   type?: string,
+  isLoading?: boolean,
   fields: Field[]
   action: any;
 }

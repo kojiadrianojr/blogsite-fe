@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import FormComponent from "@/app/foundations/forms";
 import { FormModel } from "@/app/foundations/forms/index.model";
 import { Container, Paper, Typography } from "@mui/material";
@@ -34,22 +34,30 @@ const LoginPage = () => {
   const { login, storeToken } = authActions();
   const router = useRouter();
   const { sendError, sendSuccess } = useToast();
-  
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const handleAction = (payload: any) => {
+    setIsLoading(true);
     login(payload)
       .then((res) => {
         storeToken(res.access, "access");
         storeToken(res.refresh, "refresh");
-        const msg = "Successfully Logged in!"
-        sendSuccess(msg)
-        // router.push("/");
+        const msg = "Successfully Logged in!";
+        sendSuccess(msg);
+        router.push("/");
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 2000);
       })
       .catch((e) => {
         console.error({ status: e.status, msg: e.statusText });
         if (e.status === 401) {
-          const msg = "Check your credentials!"
+          const msg = "Check your credentials!";
           sendError(msg);
         }
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 2000);
       });
   };
 
@@ -82,6 +90,7 @@ const LoginPage = () => {
           <FormComponent
             {...FormModel.getProps({
               type: "Login",
+              isLoading,
               fields: FIELDS,
               action: handleAction,
             })}

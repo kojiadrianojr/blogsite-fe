@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import FormComponent from "@/app/foundations/forms";
 import { FormModel } from "@/app/foundations/forms/index.model";
 import { Container, Paper, Typography } from "@mui/material";
@@ -35,26 +35,35 @@ const FIELDS: Field[] = [
   },
 ];
 
-
-
 const RegisterPage = () => {
-  const { sendWarn, sendSuccess } = useToast(); 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { sendWarn, sendSuccess } = useToast();
   const router = useRouter();
   const { register } = authActions();
   const handleAction = (payload: any) => {
+    setIsLoading(true);
     register(payload)
       .then((res) => {
         if (!res?.ok) {
-          const msg = `${handleErrors(res?.result)}`
-          sendWarn(msg)
+          const msg = `${handleErrors(res?.result)}`;
+          sendWarn(msg);
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 3000);
           return;
         }
-        const msg = `User account: ${payload.username} created!`
-        sendSuccess(msg)
+        const msg = `User account: ${payload.username} created!`;
+        sendSuccess(msg);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 3000);
         router.push("/auth/login");
       })
       .catch((e) => {
         console.error(e);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 3000);
       });
   };
 
@@ -87,6 +96,7 @@ const RegisterPage = () => {
           <FormComponent
             {...FormModel.getProps({
               type: "Register",
+              isLoading,
               fields: FIELDS,
               action: handleAction,
             })}
@@ -105,6 +115,6 @@ export default function RenderPage() {
   );
 }
 
-export const handleErrors = (error:any) => {
-  return Object.values(error).join(',').split(',')[0];
-}
+export const handleErrors = (error: any) => {
+  return Object.values(error).join(",").split(",")[0];
+};
