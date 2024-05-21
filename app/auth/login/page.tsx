@@ -9,7 +9,8 @@ import authActions from "../utils";
 import { useRouter } from "next/navigation";
 import LoginImage from "@/public/login.svg";
 import NoSSR from "@/app/lib/NoSsr";
-import useToast, { ToastContainerProvider } from "@/app/features/Toasts";
+import useToast from "@/app/features/Toasts";
+import Providers from "@/app/lib/Providers";
 
 type Field = {
   fieldName: string;
@@ -103,8 +104,8 @@ const LoginPage = () => {
 
 export default function RenderPage() {
   return (
-    <ToastContainerProvider>
+    <Providers>
       <LoginPage />
-    </ToastContainerProvider>
+    </Providers>
   );
 }

@@ -9,7 +9,8 @@ import authActions from "../utils";
 import { useRouter } from "next/navigation";
 import RegisterImage from "@/public/register.svg";
 import NoSSR from "@/app/lib/NoSsr";
-import useToast, { ToastContainerProvider } from "@/app/features/Toasts";
+import useToast from "@/app/features/Toasts";
+import Providers from "@/app/lib/Providers";
 
 type Field = {
   fieldName: string;
@@ -109,9 +110,9 @@ const RegisterPage = () => {
 
 export default function RenderPage() {
   return (
-    <ToastContainerProvider>
+    <Providers>
       <RegisterPage />
-    </ToastContainerProvider>
+    </Providers>
   );
 }
 
