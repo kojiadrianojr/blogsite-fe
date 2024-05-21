@@ -87,7 +87,7 @@ const PostFields = (props: Props) => {
         >
           Cancel
         </Button>
-        <Button startIcon={<BackspaceRounded />}>Clear</Button>
+        {/* <Button startIcon={<BackspaceRounded />}>Clear</Button> */}
         <LoadingButton loadingPosition="end" loading={isLoading} onClick={handleSend} endIcon={<SendRounded />}>
           <span>Submit</span>
         </LoadingButton>
