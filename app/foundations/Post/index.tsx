@@ -16,8 +16,10 @@ import { fetcher } from "@/app/lib/fetcher";
 import useAuth from "@/app/lib/auth/AuthContextProvider";
 import { usePost } from "@/app/lib/hooks";
 import useData from "@/app/lib/data/DataContextProvider";
+import { useRouter } from "next/navigation";
 
 const Component = (props: Props) => {
+  const router = useRouter();
   const { currUser } = useAuth();
   const { deletePost } = usePost();
   const { setPosts } = useData();
@@ -26,6 +28,9 @@ const Component = (props: Props) => {
   const { data: author } = useSWR(`/auth/users/${owner}`, fetcher);
   const isCurrUser = author?.username === currUser?.username;
 
+  const handleEdit = () => {
+    router.push(`/update/${id}`)
+  }
   const handleDelete = () => {
     setPosts((items: any) => items.filter((item: any) => item.id !== id));
     deletePost(id).then((res) => console.log(res));
@@ -49,7 +54,7 @@ const Component = (props: Props) => {
       <CardActions disableSpacing>
         {!isNew && isCurrUser && (
           <Box className="w-full">
-            <IconButton aria-label="edit post">
+            <IconButton aria-label="edit post" onClick={handleEdit}>
               <ModeEditRounded />
             </IconButton>
             <IconButton aria-label="delete post" onClick={handleDelete}>
