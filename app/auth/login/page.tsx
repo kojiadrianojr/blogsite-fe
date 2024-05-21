@@ -9,6 +9,7 @@ import authActions from "../utils";
 import { useRouter } from "next/navigation";
 import LoginImage from "@/public/login.svg";
 import NoSSR from "@/app/lib/NoSsr";
+import useToast, { ToastContainerProvider } from "@/app/features/Toasts";
 
 type Field = {
   fieldName: string;
@@ -32,17 +33,23 @@ const FIELDS: Field[] = [
 const LoginPage = () => {
   const { login, storeToken } = authActions();
   const router = useRouter();
-
+  const { sendError, sendSuccess } = useToast();
+  
   const handleAction = (payload: any) => {
     login(payload)
       .then((res) => {
         storeToken(res.access, "access");
         storeToken(res.refresh, "refresh");
-        router.push("/");
-        console.log("User successfully logged in...");
+        const msg = "Successfully Logged in!"
+        sendSuccess(msg)
+        // router.push("/");
       })
       .catch((e) => {
         console.error({ status: e.status, msg: e.statusText });
+        if (e.status === 401) {
+          const msg = "Check your credentials!"
+          sendError(msg);
+        }
       });
   };
 
@@ -86,5 +93,9 @@ const LoginPage = () => {
 };
 
 export default function RenderPage() {
-  return <LoginPage />;
+  return (
+    <ToastContainerProvider>
+      <LoginPage />
+    </ToastContainerProvider>
+  );
 }

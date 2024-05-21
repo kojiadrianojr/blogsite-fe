@@ -9,6 +9,7 @@ import authActions from "../utils";
 import { useRouter } from "next/navigation";
 import RegisterImage from "@/public/register.svg";
 import NoSSR from "@/app/lib/NoSsr";
+import useToast, { ToastContainerProvider } from "@/app/features/Toasts";
 
 type Field = {
   fieldName: string;
@@ -34,17 +35,22 @@ const FIELDS: Field[] = [
   },
 ];
 
+
+
 const RegisterPage = () => {
+  const { sendWarn, sendSuccess } = useToast(); 
   const router = useRouter();
   const { register } = authActions();
   const handleAction = (payload: any) => {
     register(payload)
       .then((res) => {
         if (!res?.ok) {
-          console.log(res?.result);
+          const msg = `${handleErrors(res?.result)}`
+          sendWarn(msg)
           return;
         }
-        console.log("Use account created!!!");
+        const msg = `User account: ${payload.username} created!`
+        sendSuccess(msg)
         router.push("/auth/login");
       })
       .catch((e) => {
@@ -92,5 +98,13 @@ const RegisterPage = () => {
 };
 
 export default function RenderPage() {
-  return <RegisterPage />;
+  return (
+    <ToastContainerProvider>
+      <RegisterPage />
+    </ToastContainerProvider>
+  );
+}
+
+export const handleErrors = (error:any) => {
+  return Object.values(error).join(',').split(',')[0];
 }
