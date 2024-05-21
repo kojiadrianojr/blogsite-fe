@@ -37,7 +37,7 @@ const Component = (props: Props) => {
   };
 
   return (
-    <Card sx={{ p: { xs: 0, md: 3 }, height: "100%" }}>
+    <Card sx={{ p: { xs: 0, md: 3}, height: "100%", display: 'flex', flexDirection: 'column'}}>
       <CardHeader
         title={title}
         titleTypographyProps={{
@@ -51,7 +51,7 @@ const Component = (props: Props) => {
         </Typography>
         <Typography variant={isNew ? "h5" : "body1"}>{description}</Typography>
       </CardContent>
-      <CardActions disableSpacing>
+      <CardActions disableSpacing sx={{marginTop: 'auto'}}>
         {!isNew && isCurrUser && (
           <Box className="w-full">
             <IconButton aria-label="edit post" onClick={handleEdit}>
