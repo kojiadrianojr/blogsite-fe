@@ -6,7 +6,7 @@ import React from "react";
 const Filters = () => {
   const router = useRouter();
   return (
-    <Box my={2}>
+    <Box my={4}>
       <Button
         onClick={() => router.push("/add")}
         variant="outlined"
