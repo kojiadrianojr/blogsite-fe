@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react";
-import { CloseRounded, SendRounded } from "@mui/icons-material";
+import {
+  BackspaceRounded,
+  CloseRounded,
+  SendRounded,
+} from "@mui/icons-material";
 import { Box, ButtonGroup, Button, TextField } from "@mui/material";
 import { Props } from "./index.d";
 import { useRouter } from "next/navigation";
+import useToast from "@/app/features/Toasts";
+import { LoadingButton } from "@mui/lab";
 
 const PostFields = (props: Props) => {
   const { action, owner } = props;
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const { sendSuccess, sendInfo } = useToast();
 
   useEffect(() => {
     if (props.title && props.description) {
@@ -23,20 +31,33 @@ const PostFields = (props: Props) => {
   };
 
   const handleSend = () => {
+    setIsLoading(true)
     action({
       owner,
       title,
       description,
     })
-      .then((res: any) => console.log(res))
-      .catch((e: any) => console.error(e));
+      .then((res: any) => {
+        sendSuccess(`Posted successfully! Redirecting...`);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 2000)
+        router.push("/");
+      })
+      .catch((e: any) => {
+        console.error(`handleSend`, e);
+        sendInfo('Error found, please retry...')
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 2000)
+      });
   };
 
   return (
     <div>
       <Box my="16px">
         <TextField
-          label="title"
+          label="Title"
           variant="standard"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -47,7 +68,7 @@ const PostFields = (props: Props) => {
         <TextField
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          label="description"
+          label="Description"
           variant="outlined"
           multiline
           rows={4}
@@ -55,9 +76,9 @@ const PostFields = (props: Props) => {
         />
       </Box>
       <ButtonGroup
-        sx={{ mt: "16px" }}
+        sx={{ my: "16px" }}
         variant="contained"
-        className="text-right"
+        size="small"
       >
         <Button
           onClick={handleCancel}
@@ -66,9 +87,10 @@ const PostFields = (props: Props) => {
         >
           Cancel
         </Button>
-        <Button onClick={handleSend} endIcon={<SendRounded />}>
-          Post
-        </Button>
+        <Button startIcon={<BackspaceRounded />}>Clear</Button>
+        <LoadingButton loadingPosition="end" loading={isLoading} onClick={handleSend} endIcon={<SendRounded />}>
+          <span>Submit</span>
+        </LoadingButton>
       </ButtonGroup>
     </div>
   );

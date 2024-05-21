@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   description: "Connecting People",
 };
 
+export const revalidate = 3600;
+
 export default function RootLayout({
   children,
 }: Readonly<{
