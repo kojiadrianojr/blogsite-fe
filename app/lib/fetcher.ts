@@ -1,3 +1,4 @@
+import { protectedRoutes } from './../config';
 import authActions from "../auth/utils";
 import { API_URL } from "../config";
 import { isValidToken } from "./verifyToken";
@@ -8,10 +9,10 @@ export const fetcher = (url: string) => {
   const bearer: string = `Bearer ${getToken("access")}`;
 
   // Check for refresh token;
-  if (isValidToken(getToken('refresh')) === false) {
+  if (isValidToken(getToken('refresh')) === false && isValidToken(getToken('access')) === false) {
     return Promise.reject('No Refresh token found');
   }
-  
+
   return fetch(urlLink, {
     method: "GET",
     headers: {
@@ -29,15 +30,28 @@ export const fetcher = (url: string) => {
         }
       }).then((res) => {
         if (res.status === 401) {
-          window.location.replace('/auth/login');
+          if (protectedRoutes.includes(window.location.pathname)){
+            return window.location.replace(window.location.pathname)
+          }
+          return window.location.replace('/auth/login');
         } else {
           return res.json();
         }
-      }).catch(e => window.location.replace('/auth/login'));
+      }).catch(e => {
+        if (protectedRoutes.includes(window.location.pathname)){
+          return window.location.replace(window.location.pathname)
+        }
+        return window.location.replace('/auth/login');
+      });
     } else {
       return res.json();
     }
   })
-  .catch(e => window.location.replace('/auth/login'));
+  .catch(e => {
+    if (protectedRoutes.includes(window.location.pathname)){
+      return window.location.replace(window.location.pathname)
+    }
+    return window.location.replace('/auth/login');
+  });
 
 };
