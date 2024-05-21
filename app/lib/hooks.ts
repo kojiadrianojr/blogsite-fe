@@ -10,6 +10,23 @@ type PayloadProps = {
 }
 
 
+const deletePost = async (id: number) => {
+  const url = `${API_URL}/api/blog/${id}`;
+  const bearer = `Bearer ${getToken("access")}`;
+  try {
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        Authorization: bearer,
+      }
+    })
+    return res;
+  } catch (e) {
+    console.error(e);
+  }
+} 
+
+
 const sendPost = async(payload:PayloadProps) => {
   const url = `${API_URL}/api/blog/`;
   const bearer = `Bearer ${getToken("access")}`
@@ -31,5 +48,6 @@ const sendPost = async(payload:PayloadProps) => {
 export const usePost = () => {
   return {
     sendPost,
+    deletePost,
   }
 }

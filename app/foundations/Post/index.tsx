@@ -14,16 +14,25 @@ import { Props } from "./index.d";
 import useSWR from "swr";
 import { fetcher } from "@/app/lib/fetcher";
 import useAuth from "@/app/lib/auth/AuthContextProvider";
+import { usePost } from "@/app/lib/hooks";
+import useData from "@/app/lib/data/DataContextProvider";
 
 const Component = (props: Props) => {
   const { currUser } = useAuth();
-  const isNew = props?.isNew;
-  const { title, description, created, owner } = props;
+  const { deletePost } = usePost();
+  const { setPosts } = useData();
+  const { id, title, description, created, owner, isNew } = props;
   // Match the 'owner'Id from the 'users' list;
   const { data: author } = useSWR(`/auth/users/${owner}`, fetcher);
-  const isCurrUser = author?.username  === currUser?.username;
+  const isCurrUser = author?.username === currUser?.username;
+
+  const handleDelete = () => {
+    setPosts((items: any) => items.filter((item: any) => item.id !== id));
+    deletePost(id).then((res) => console.log(res));
+  };
+
   return (
-    <Card sx={{ p: { xs: 0, md: 3 }, height: '100%'}} >
+    <Card sx={{ p: { xs: 0, md: 3 }, height: "100%" }}>
       <CardHeader
         title={title}
         titleTypographyProps={{
@@ -43,7 +52,7 @@ const Component = (props: Props) => {
             <IconButton aria-label="edit post">
               <ModeEditRounded />
             </IconButton>
-            <IconButton aria-label="delete post">
+            <IconButton aria-label="delete post" onClick={handleDelete}>
               <DeleteRounded />
             </IconButton>
           </Box>

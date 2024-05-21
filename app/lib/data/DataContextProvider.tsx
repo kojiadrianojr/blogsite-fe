@@ -12,10 +12,12 @@ export type PostProps = {
 
 type DataContextProps = {
   posts: PostProps[] | [];
+  setPosts: any
 };
 
 const initialState: DataContextProps = {
   posts: [],
+  setPosts: null,
 };
 export const DataContext = createContext(initialState);
 export const DataContextProvider = ({ children }: { children: any }) => {
@@ -30,7 +32,7 @@ export const DataContextProvider = ({ children }: { children: any }) => {
   }, [data]);
 
   return (
-    <DataContext.Provider value={{ posts }}>{children}</DataContext.Provider>
+    <DataContext.Provider value={{ posts, setPosts }}>{children}</DataContext.Provider>
   );
 };
 
