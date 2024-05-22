@@ -7,7 +7,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <AuthContextProvider>
       <DataContextProvider>
-        <ToastContainerProvider>{children}</ToastContainerProvider>
+        <ToastContainerProvider>
+          {children}
+        </ToastContainerProvider>
       </DataContextProvider>
     </AuthContextProvider>
   );

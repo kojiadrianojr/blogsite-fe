@@ -25,18 +25,18 @@ import { ViewSkeleton } from "@/app/features/Skeleton";
 import Field from "@/app/foundations/PostFields.tsx/atoms/Field";
 import { usePost } from "@/app/lib/hooks";
 import useToast from "@/app/features/Toasts";
+import useDialog from "@/app/lib/dialog/useDialog";
 
 const Page = ({ params }: { params: any }) => {
-  const { sendError, sendSuccess } = useToast();
+  const { sendError, sendSuccess, sendInfo } = useToast();
   const [edit, setEdit] = useState<boolean>(false);
   const [stateTitle, setTitle] = useState<string>("");
   const [stateDescription, setDescription] = useState<string>("");
   const router = useRouter();
-  const { posts, loading} = useData();
+  const { posts, loading, setPosts } = useData();
   const { currUser } = useAuth();
-  const { editPost } = usePost();
+  const { editPost, deletePost } = usePost();
 
-  
   const data: Props = useMemo(() => {
     const post = posts.find((p) => p.id === parseInt(params.id));
     return {
@@ -46,8 +46,11 @@ const Page = ({ params }: { params: any }) => {
       owner: post?.owner,
     };
   }, [posts]);
-
   const { title, description, owner, created } = PageModel.getProps(data);
+  const [Dialog, confirm] = useDialog(
+    "Are you sure?",
+    `Are you sure you want to delete "${title}" ?`
+  );
   useEffect(() => {
     if (posts) {
       setDescription(description ?? "");
@@ -62,6 +65,21 @@ const Page = ({ params }: { params: any }) => {
     setTitle(title ?? "");
     setDescription(description ?? "");
     setEdit(!edit);
+  };
+
+  const handleDelete = async () => {
+    const userResponse = await confirm();
+    if (userResponse) {
+      setPosts((items: any) =>
+        items.filter((item: any) => item.id !== params.id)
+      );
+      deletePost(params.id).then(() => {
+        sendSuccess("Post Delete!");
+        setTimeout(() => router.back(), 1000);
+      });
+    } else {
+      sendInfo("Operation canceled");
+    }
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,79 +108,82 @@ const Page = ({ params }: { params: any }) => {
   const authorized: boolean = currUser?.username === owner;
 
   return (
-    <Container maxWidth="md" disableGutters>
-      <Stack spacing={1} mt={4} mb={2} sx={{ p: { xs: 2 } }}>
-        {edit ? (
-          <Field
-            label="Title"
-            value={stateTitle}
-            onChange={handleTitleChange}
-          />
-        ) : (
-          <Typography variant="h5" gutterBottom className="underline">
-            {stateTitle}
+    <>
+      <Container maxWidth="md" disableGutters>
+        <Stack spacing={1} mt={4} mb={2} sx={{ p: { xs: 2 } }}>
+          {edit ? (
+            <Field
+              label="Title"
+              value={stateTitle}
+              onChange={handleTitleChange}
+            />
+          ) : (
+            <Typography variant="h5" gutterBottom className="underline">
+              {stateTitle}
+            </Typography>
+          )}
+
+          <Typography variant="subtitle2" gutterBottom>
+            {created} by {owner ?? data?.owner}
           </Typography>
-        )}
+        </Stack>
 
-        <Typography variant="subtitle2" gutterBottom>
-          {created} by {owner}
-        </Typography>
-      </Stack>
-
-      <ButtonGroup
-        sx={{ mb: 2, justifyContent: "space-between", width: "100%" }}
-      >
-        <Button
-          color="info"
-          variant="text"
-          onClick={() => router.back()}
-          startIcon={<ChevronLeftRounded />}
+        <ButtonGroup
+          sx={{ mb: 2, justifyContent: "space-between", width: "100%" }}
         >
-          Back
-        </Button>
-        {authorized && (
-          <div>
-            <IconButton color="warning">
-              <DeleteRounded />
-            </IconButton>
-            <IconButton onClick={handleEdit} color="secondary">
-              <EditRounded />
-            </IconButton>
-            {edit && (
-              <IconButton onClick={handleSave} color="success">
-                <SaveRounded />
+          <Button
+            color="info"
+            variant="text"
+            onClick={() => router.back()}
+            startIcon={<ChevronLeftRounded />}
+          >
+            Back
+          </Button>
+          {authorized && (
+            <div>
+              <IconButton onClick={handleDelete} color="warning">
+                <DeleteRounded />
               </IconButton>
-            )}
-          </div>
-        )}
-      </ButtonGroup>
-      <Paper
-        sx={{
-          p: {
-            xs: 2,
-            sm: 4,
-          },
-          m: {
-            xs: 1,
-          },
-        }}
-      >
-        {edit ? (
-          <Field
-            label="Description"
-            value={stateDescription}
-            onChange={handleDescriptionChange}
-            multiline
-            rows={4}
-            variant="filled"
-          />
-        ) : (
-          <Typography variant="body1" gutterBottom>
-            {stateDescription}
-          </Typography>
-        )}
-      </Paper>
-    </Container>
+              <IconButton onClick={handleEdit} color="secondary">
+                <EditRounded />
+              </IconButton>
+              {edit && (
+                <IconButton onClick={handleSave} color="success">
+                  <SaveRounded />
+                </IconButton>
+              )}
+            </div>
+          )}
+        </ButtonGroup>
+        <Paper
+          sx={{
+            p: {
+              xs: 2,
+              sm: 4,
+            },
+            m: {
+              xs: 1,
+            },
+          }}
+        >
+          {edit ? (
+            <Field
+              label="Description"
+              value={stateDescription}
+              onChange={handleDescriptionChange}
+              multiline
+              rows={4}
+              variant="filled"
+            />
+          ) : (
+            <Typography variant="body1" gutterBottom>
+              {stateDescription}
+            </Typography>
+          )}
+        </Paper>
+      </Container>
+      {Dialog()}
+    </>
   );
 };
 

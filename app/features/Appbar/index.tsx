@@ -3,10 +3,7 @@
 import {
   AppBar,
   Box,
-  Button,
-  Card,
   Container,
-  Divider,
   IconButton,
   ListItemIcon,
   Menu,
@@ -20,11 +17,12 @@ import { Logout, PersonRounded, SendRounded } from "@mui/icons-material";
 import authActions from "@/app/auth/utils";
 import { useRouter } from "next/navigation";
 import { isValidToken } from "@/app/lib/verifyToken";
+import useToast from "../Toasts";
 
 const Component = () => {
   const router = useRouter();
+  const { sendSuccess } = useToast();
   const { logout, removeTokens, getToken } = authActions();
-  const isAuth = isValidToken(getToken("refresh"));
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
@@ -41,7 +39,7 @@ const Component = () => {
     logout()
       .then((res) => {
         removeTokens();
-        console.log("logged out successfully");
+        sendSuccess("See you again!");
         router.push("/auth/login");
       })
       .catch((e) => console.error(e));
@@ -69,22 +67,27 @@ const Component = () => {
           >
             PAPERS
           </Typography>
-
           <Box>
             <Tooltip title="user menu">
-              <IconButton onClick={handleOpenUserMenu}>
+              <IconButton
+                id="user-menu-button"
+                onClick={handleOpenUserMenu}
+                aria-controls={
+                  Boolean(anchorElUser) ? "user-options" : undefined
+                }
+                aria-haspopup={Boolean(anchorElUser) ? true : undefined}
+                aria-expanded={Boolean(anchorElUser) ? true : undefined}
+              >
                 <PersonRounded />
               </IconButton>
             </Tooltip>
             <Menu
-              sx={{ mt: "45px" }}
+              id="user-options"
+              anchorEl={anchorElUser}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
-              anchorOrigin={{ vertical: "top", horizontal: "right" }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
+              MenuListProps={{
+                "aria-labelledby": "user-menu-button",
               }}
             >
               <MenuItem onClick={handleLogout}>
