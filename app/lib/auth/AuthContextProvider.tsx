@@ -13,7 +13,6 @@ const initialState: AuthContextProps = {
 export const AuthContext = createContext<AuthContextProps>(initialState);
 export const AuthContextProvider = ({ children }: { children: any }) => {
   const { data: user } = useSWR('/auth/users/me', fetcher);
-  const [isAuth, setIsAuth] = useState<boolean>(false);
   const [currUser, setCurrUser] = useState<any|null>(null);
 
   useEffect(() => {

@@ -2,6 +2,7 @@ import { protectedRoutes } from './../config';
 import authActions from "../auth/utils";
 import { API_URL } from "../config";
 import { isValidToken } from "./verifyToken";
+import { revalidate } from '../layout';
 
 const { handleJWTrefresh, storeToken, getToken } = authActions();
 export const fetcher = (url: string) => {
@@ -18,7 +19,7 @@ export const fetcher = (url: string) => {
     headers: {
       Authorization: bearer,
       "Content-Type": "application/json",
-    }
+    },
   })
   .then(async (res) => {
     if (res.status === 401) {
@@ -48,10 +49,11 @@ export const fetcher = (url: string) => {
     }
   })
   .catch(e => {
-    if (protectedRoutes.includes(window.location.pathname)){
-      return window.location.replace(window.location.pathname)
-    }
-    return window.location.replace('/auth/login');
+    // if (protectedRoutes.includes(window.location.pathname)){
+    //   return window.location.replace(window.location.pathname)
+    // }
+    // return window.location.replace('/auth/login');
+    console.error('first catch', e);
   });
 
 };

@@ -30,7 +30,7 @@ const Page = ({ params }: { params: any }) => {
 
   return (
     <Container maxWidth="sm" className="p-4">
-      <Typography>Editting your post, {currUser?.username}!</Typography>
+      <Typography variant="h5" gutterBottom>Editting your post, {currUser?.username}!</Typography>
       <PostFields {...PostFieldsModel.getProps(payload)} />
     </Container>
   );

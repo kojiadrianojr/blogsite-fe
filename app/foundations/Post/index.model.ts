@@ -4,8 +4,8 @@ import moment from "moment";
 
 export class PostModel {
   static getProps(props: Props): Props {
-    const { id, owner, title, description, isNew, created } = props;
-    const modifiedDate = moment(created).calendar();
+    const { id, owner, title, description, isNew, created, variant, raised} = props;
+    const modifiedDate = created ? moment(created).calendar() : '';
     return {
       id,
       owner,
@@ -13,6 +13,8 @@ export class PostModel {
       description,
       isNew,
       created: modifiedDate,
+      variant,
+      raised,
     };
   }
 }

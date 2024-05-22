@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AppBar,
   Box,
@@ -17,11 +19,12 @@ import React from "react";
 import { Logout, PersonRounded, SendRounded } from "@mui/icons-material";
 import authActions from "@/app/auth/utils";
 import { useRouter } from "next/navigation";
-
+import { isValidToken } from "@/app/lib/verifyToken";
 
 const Component = () => {
   const router = useRouter();
-  const { logout, removeTokens } = authActions();
+  const { logout, removeTokens, getToken } = authActions();
+  const isAuth = isValidToken(getToken("refresh"));
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
@@ -34,14 +37,15 @@ const Component = () => {
     setAnchorElUser(null);
   };
 
-
   const handleLogout = () => {
-    logout().then((res) => {
-      removeTokens();
-      console.log("logged out successfully");
-      router.push('/auth/login');
-    }).catch((e) => console.error(e))
-  }
+    logout()
+      .then((res) => {
+        removeTokens();
+        console.log("logged out successfully");
+        router.push("/auth/login");
+      })
+      .catch((e) => console.error(e));
+  };
 
   return (
     <AppBar color="transparent" position="static">
@@ -65,7 +69,7 @@ const Component = () => {
           >
             PAPERS
           </Typography>
-          {/* Render mobile view  */}
+
           <Box>
             <Tooltip title="user menu">
               <IconButton onClick={handleOpenUserMenu}>

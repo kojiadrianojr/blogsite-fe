@@ -9,6 +9,7 @@ import { Props } from "./index.d";
 import { useRouter } from "next/navigation";
 import useToast from "@/app/features/Toasts";
 import { LoadingButton } from "@mui/lab";
+import Field from "./atoms/Field";
 
 const PostFields = (props: Props) => {
   const { action, owner } = props;
@@ -27,11 +28,18 @@ const PostFields = (props: Props) => {
   }, [props.title, props.description]);
 
   const handleCancel = () => {
-    router.push("/");
+    router.back();
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
+  };
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDescription(e.target.value);
   };
 
   const handleSend = () => {
-    setIsLoading(true)
+    setIsLoading(true);
     action({
       owner,
       title,
@@ -41,45 +49,33 @@ const PostFields = (props: Props) => {
         sendSuccess(`Posted successfully! Redirecting...`);
         setTimeout(() => {
           setIsLoading(false);
-        }, 2000)
+        }, 2000);
         router.push("/");
       })
       .catch((e: any) => {
         console.error(`handleSend`, e);
-        sendInfo('Error found, please retry...')
+        sendInfo("Error found, please retry...");
         setTimeout(() => {
           setIsLoading(false);
-        }, 2000)
+        }, 2000);
       });
   };
 
   return (
     <div>
       <Box my="16px">
-        <TextField
-          label="Title"
-          variant="standard"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          fullWidth
-        />
+        <Field label="Title" onChange={handleTitleChange} value={title} />
       </Box>
       <Box my="8px">
-        <TextField
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+        <Field
           label="Description"
-          variant="outlined"
+          onChange={handleDescriptionChange}
+          value={description}
           multiline
           rows={4}
-          fullWidth
         />
       </Box>
-      <ButtonGroup
-        sx={{ my: "16px" }}
-        variant="contained"
-        size="small"
-      >
+      <ButtonGroup sx={{ my: "16px" }} variant="contained" size="small">
         <Button
           onClick={handleCancel}
           startIcon={<CloseRounded />}
@@ -88,7 +84,12 @@ const PostFields = (props: Props) => {
           Cancel
         </Button>
         {/* <Button startIcon={<BackspaceRounded />}>Clear</Button> */}
-        <LoadingButton loadingPosition="end" loading={isLoading} onClick={handleSend} endIcon={<SendRounded />}>
+        <LoadingButton
+          loadingPosition="end"
+          loading={isLoading}
+          onClick={handleSend}
+          endIcon={<SendRounded />}
+        >
           <span>Submit</span>
         </LoadingButton>
       </ButtonGroup>

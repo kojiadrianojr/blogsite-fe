@@ -4,7 +4,7 @@ import authActions from "../auth/utils";
 const { getToken } = authActions();
 
 type PayloadProps = {
-  owner: string;
+  owner?: string;
   title: string;
   description: string
 }

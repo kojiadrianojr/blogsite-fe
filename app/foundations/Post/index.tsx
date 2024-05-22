@@ -28,15 +28,27 @@ const Component = (props: Props) => {
   const { data: author } = useSWR(`/auth/users/${owner}`, fetcher);
   const isCurrUser = author?.username === currUser?.username;
   const handleEdit = () => {
-    router.push(`/update/${id}`)
-  }
+    router.push(`/update/${id}`);
+  };
+  const handleContinueRead = () => {
+    router.push(`/view/${id}`);
+  };
   const handleDelete = () => {
     setPosts((items: any) => items.filter((item: any) => item.id !== id));
     deletePost(id).then((res) => console.log(res));
   };
 
   return (
-    <Card sx={{ p: { xs: 0, md: 3}, height: "100%", display: 'flex', flexDirection: 'column'}}>
+    <Card
+      sx={{
+        p: { xs: 0, md: 3 },
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
+      variant={props.variant}
+      raised={props.raised}
+    >
       <CardHeader
         title={title}
         titleTypographyProps={{
@@ -50,7 +62,7 @@ const Component = (props: Props) => {
         </Typography>
         <Typography variant={isNew ? "h5" : "body1"}>{description}</Typography>
       </CardContent>
-      <CardActions disableSpacing sx={{marginTop: 'auto'}}>
+      <CardActions disableSpacing sx={{ marginTop: "auto" }}>
         {!isNew && isCurrUser && (
           <Box className="w-full">
             <IconButton aria-label="edit post" onClick={handleEdit}>
@@ -62,7 +74,7 @@ const Component = (props: Props) => {
           </Box>
         )}
         <Box className="text-right w-full">
-          <Button className="text-nowrap">Continue reading</Button>
+          <Button className="text-nowrap" onClick={handleContinueRead}>Continue reading</Button>
         </Box>
       </CardActions>
     </Card>

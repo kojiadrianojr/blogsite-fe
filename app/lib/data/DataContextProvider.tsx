@@ -11,31 +11,40 @@ export type PostProps = {
 };
 
 type DataContextProps = {
-  posts: PostProps[] | [];
-  setPosts: any
+  posts: PostProps[];
+  setPosts: Function;
 };
 
 const initialState: DataContextProps = {
-  posts: [],
-  setPosts: null,
+  posts: [
+    {
+      id: 0,
+      owner: "",
+      title: "",
+      description: "",
+      created: "",
+    },
+  ],
+  setPosts: () => null,
 };
 export const DataContext = createContext(initialState);
 export const DataContextProvider = ({ children }: { children: any }) => {
   const { data } = useSWR("/api/blog", fetcher);
-  const [posts, setPosts] = useState<PostProps[] | []>([]);
+  const [posts, setPosts] = useState<PostProps[]>(initialState.posts);
 
   useEffect(() => {
-    if (!data) {
-      return setPosts([]);
+    if (data) {
+      setPosts(data);
     }
-    return setPosts(data);
   }, [data]);
 
   return (
-    <DataContext.Provider value={{ posts, setPosts }}>{children}</DataContext.Provider>
+    <DataContext.Provider value={{ posts, setPosts }}>
+      {children}
+    </DataContext.Provider>
   );
 };
 
-export default function useData(){
+export default function useData() {
   return useContext(DataContext);
 }
