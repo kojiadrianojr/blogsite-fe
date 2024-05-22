@@ -21,7 +21,7 @@ const Posts = dynamic(() => import("./features/Posts"), {
   loading: PostsSkeleton,
 });
 
-export function Home() {
+function Home() {
   const { loading } = useData();
   if (loading) {
     return <MainSkeleton />
