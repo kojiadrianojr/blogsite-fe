@@ -28,33 +28,30 @@ import useToast from "@/app/features/Toasts";
 
 const Page = ({ params }: { params: any }) => {
   const { sendError, sendSuccess } = useToast();
-  const [loading, setLoading] = useState<boolean>(true);
   const [edit, setEdit] = useState<boolean>(false);
   const [stateTitle, setTitle] = useState<string>("");
   const [stateDescription, setDescription] = useState<string>("");
   const router = useRouter();
-  const { posts } = useData();
+  const { posts, loading} = useData();
   const { currUser } = useAuth();
   const { editPost } = usePost();
 
-  const post: Props = useMemo(
-    () => posts.find((p) => p.id === params.id) ?? posts[0],
-    [posts]
-  );
+  
+  const data: Props = useMemo(() => {
+    const post = posts.find((p) => p.id === parseInt(params.id));
+    return {
+      title: post?.title,
+      created: post?.created,
+      description: post?.description,
+      owner: post?.owner,
+    };
+  }, [posts]);
 
-  const data = {
-    title: post.title,
-    created: post.created,
-    description: post.description,
-    owner: post.owner,
-  };
   const { title, description, owner, created } = PageModel.getProps(data);
-
   useEffect(() => {
     if (posts) {
       setDescription(description ?? "");
       setTitle(title ?? "");
-      setLoading(false);
     }
   }, [posts]);
 

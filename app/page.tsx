@@ -9,6 +9,7 @@ import MainSkeleton, {
   FiltersSkeleton,
   PostsSkeleton,
 } from "./features/Skeleton/";
+import useData from "./lib/data/DataContextProvider";
 
 const Appbar = dynamic(() => import("@/app/features/Appbar"), {
   loading: AppBarSkeleton,
@@ -21,6 +22,10 @@ const Posts = dynamic(() => import("./features/Posts"), {
 });
 
 export function Home() {
+  const { loading } = useData();
+  if (loading) {
+    return <MainSkeleton />
+  }
   
   return (
     <Container fixed disableGutters>

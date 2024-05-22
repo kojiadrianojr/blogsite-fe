@@ -7,32 +7,27 @@ import { compareDates, truncateText } from "@/app/lib/utils";
 import useData from "@/app/lib/data/DataContextProvider";
 
 const Posts = () => {
-  const { posts } = useData();
+  const { posts, loading } = useData();
   const latest = useMemo(() => {
     return posts.sort(compareDates)[posts.length - 1];
   }, [posts]);
 
   const restPosts = useMemo(() => posts.filter((p) => p !== latest), [posts]);
+
   return (
     <>
-      <Box
-        mb={4}
-        sx={{
-          minHeight: {
-            xs: "30vh",
-            md: "auto",
-          },
-        }}
-      >
-        <Post
-          {...PostModel.getProps({
-            ...latest,
-            description: truncateText(latest.description, 50),
-          })}
-          isNew
-          raised={true}
-        />
-      </Box>
+      {!loading && (
+        <Box mb={4}>
+          <Post
+            {...PostModel.getProps({
+              ...latest,
+              description: truncateText(latest.description, 50),
+            })}
+            isNew
+            raised={true}
+          />
+        </Box>
+      )}
 
       <Grid
         container

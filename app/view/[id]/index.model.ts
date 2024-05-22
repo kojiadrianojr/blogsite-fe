@@ -3,10 +3,10 @@ import moment from "moment";
 import useSWR from "swr";
 
 export type Props = {
-  title: string;
-  description: string;
-  owner: string;
-  created: string;
+  title?: string;
+  description?: string;
+  owner?: string;
+  created?: string;
 }
 
 export class PageModel {

@@ -11,11 +11,13 @@ export type PostProps = {
 };
 
 type DataContextProps = {
+  loading: boolean
   posts: PostProps[];
   setPosts: Function;
 };
 
 const initialState: DataContextProps = {
+  loading: true,
   posts: [
     {
       id: 0,
@@ -30,16 +32,18 @@ const initialState: DataContextProps = {
 export const DataContext = createContext(initialState);
 export const DataContextProvider = ({ children }: { children: any }) => {
   const { data } = useSWR("/api/blog", fetcher);
+  const [loading, setLoading] = useState<boolean>(true);
   const [posts, setPosts] = useState<PostProps[]>(initialState.posts);
 
   useEffect(() => {
     if (data) {
+      setLoading(false);
       setPosts(data);
     }
   }, [data]);
 
   return (
-    <DataContext.Provider value={{ posts, setPosts }}>
+    <DataContext.Provider value={{ posts, setPosts, loading}}>
       {children}
     </DataContext.Provider>
   );
