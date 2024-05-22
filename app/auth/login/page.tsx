@@ -77,9 +77,10 @@ const LoginPage = () => {
           }}
         >
           <Image
+            width={500}
+            height={500}
             src={LoginImage.src}
             alt="login image"
-            style={{ width: "100%", height: "auto" }}
             className="pb-4"
           />
           <Typography variant="h5">Sign in</Typography>

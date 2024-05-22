@@ -84,9 +84,10 @@ const RegisterPage = () => {
           }}
         >
           <Image
+            width={500}
+            height={500}
             src={RegisterImage.src}
             alt="login image"
-            style={{ width: "100%", height: "auto" }}
             className="pb-4"
           />
           <Typography variant="h5">Registration Page</Typography>
@@ -117,5 +118,3 @@ export default function RenderPage() {
     </Providers>
   );
 }
-
-

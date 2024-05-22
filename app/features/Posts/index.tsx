@@ -5,6 +5,8 @@ import { PostModel } from "@/app/foundations/Post/index.model";
 import { PostProps } from "@/app/lib/data/DataContextProvider";
 import { compareDates, truncateText } from "@/app/lib/utils";
 import useData from "@/app/lib/data/DataContextProvider";
+import Image from "next/image";
+import ArticleImage from "@/public/articles.svg";
 
 const Posts = () => {
   const { posts, loading } = useData();
@@ -12,11 +14,29 @@ const Posts = () => {
     return posts.sort(compareDates)[posts.length - 1];
   }, [posts]);
 
-  const restPosts = useMemo(() => posts.filter((p) => p !== latest), [posts, latest]);
+  const restPosts = useMemo(
+    () => posts.filter((p) => p !== latest),
+    [posts, latest]
+  );
+
+  if (!latest) {
+    return (
+      <Grid container alignItems="center" justifyContent="center">
+        <Grid item>
+          <Image
+            alt="Article image"
+            src={ArticleImage.src}
+            width={500}
+            height={500}
+          />
+        </Grid>
+      </Grid>
+    );
+  }
 
   return (
     <>
-      {!loading && (
+      {!loading && latest && (
         <Box mb={4}>
           <Post
             {...PostModel.getProps({

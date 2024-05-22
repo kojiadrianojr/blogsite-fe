@@ -11,7 +11,7 @@ export type PostProps = {
 };
 
 type DataContextProps = {
-  loading: boolean
+  loading: boolean;
   posts: PostProps[];
   setPosts: Function;
 };
@@ -43,7 +43,7 @@ export const DataContextProvider = ({ children }: { children: any }) => {
   }, [data]);
 
   return (
-    <DataContext.Provider value={{ posts, setPosts, loading}}>
+    <DataContext.Provider value={{ posts, setPosts, loading }}>
       {children}
     </DataContext.Provider>
   );
