@@ -17,8 +17,8 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import { PageModel, Props } from "./index.model";
+import React, { useEffect, useState } from "react";
+import { PageModel } from "./index.model";
 import { useRouter } from "next/navigation";
 import useAuth from "@/app/lib/auth/AuthContextProvider";
 import { ViewSkeleton } from "@/app/features/Skeleton";
@@ -26,6 +26,8 @@ import Field from "@/app/foundations/PostFields.tsx/atoms/Field";
 import { usePost } from "@/app/lib/hooks";
 import useToast from "@/app/features/Toasts";
 import useDialog from "@/app/lib/dialog/useDialog";
+import useSWR from "swr";
+import { fetcher } from "@/app/lib/fetcher";
 
 const Page = ({ params }: { params: any }) => {
   const { sendError, sendSuccess, sendInfo } = useToast();
@@ -33,30 +35,29 @@ const Page = ({ params }: { params: any }) => {
   const [stateTitle, setTitle] = useState<string>("");
   const [stateDescription, setDescription] = useState<string>("");
   const router = useRouter();
-  const { posts, loading, setPosts } = useData();
+  const { loading, setPosts } = useData();
   const { currUser } = useAuth();
   const { editPost, deletePost } = usePost();
-
-  const data: Props = useMemo(() => {
-    const post = posts.find((p) => p.id === parseInt(params.id));
-    return {
-      title: post?.title,
-      created: post?.created,
-      description: post?.description,
-      owner: post?.owner,
-    };
-  }, [posts]);
+  const { data: post } = useSWR(`/api/blog/${params.id}`, fetcher);
+  const { data: fetchedAuthor } = useSWR(`/auth/users/${post?.owner}`, fetcher);
+  const data = {
+    title: post?.title,
+    description: post?.description,
+    owner: fetchedAuthor?.username,
+    created: post?.created,
+  };
   const { title, description, owner, created } = PageModel.getProps(data);
+  const author = owner ?? post?.owner;
   const [Dialog, confirm] = useDialog(
     "Are you sure?",
     `Are you sure you want to delete "${title}" ?`
   );
   useEffect(() => {
-    if (posts) {
+    if (post) {
       setDescription(description ?? "");
       setTitle(title ?? "");
     }
-  }, [posts]);
+  }, [post, description, title]);
 
   if (loading) {
     return <ViewSkeleton />;
@@ -124,7 +125,7 @@ const Page = ({ params }: { params: any }) => {
           )}
 
           <Typography variant="subtitle2" gutterBottom>
-            {created} by {owner ?? data?.owner}
+            {created} by {author}
           </Typography>
         </Stack>
 

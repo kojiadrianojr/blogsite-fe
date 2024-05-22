@@ -11,6 +11,8 @@ import RegisterImage from "@/public/register.svg";
 import NoSSR from "@/app/lib/NoSsr";
 import useToast from "@/app/features/Toasts";
 import Providers from "@/app/lib/Providers";
+import Image from "next/image";
+import { handleErrors } from "@/app/lib/utils";
 
 type Field = {
   fieldName: string;
@@ -81,7 +83,7 @@ const RegisterPage = () => {
             },
           }}
         >
-          <img
+          <Image
             src={RegisterImage.src}
             alt="login image"
             style={{ width: "100%", height: "auto" }}
@@ -116,6 +118,4 @@ export default function RenderPage() {
   );
 }
 
-export const handleErrors = (error: any) => {
-  return Object.values(error).join(",").split(",")[0];
-};
+

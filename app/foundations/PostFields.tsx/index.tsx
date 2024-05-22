@@ -25,7 +25,7 @@ const PostFields = (props: Props) => {
       setDescription(props.description);
     }
     router.refresh();
-  }, [props.title, props.description]);
+  }, [props.title, props.description, router]);
 
   const handleCancel = () => {
     router.back();
@@ -49,8 +49,8 @@ const PostFields = (props: Props) => {
         sendSuccess(`Posted successfully! Redirecting...`);
         setTimeout(() => {
           setIsLoading(false);
+          router.push("/");
         }, 2000);
-        router.push("/");
       })
       .catch((e: any) => {
         console.error(`handleSend`, e);

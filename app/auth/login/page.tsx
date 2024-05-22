@@ -11,6 +11,7 @@ import LoginImage from "@/public/login.svg";
 import NoSSR from "@/app/lib/NoSsr";
 import useToast from "@/app/features/Toasts";
 import Providers from "@/app/lib/Providers";
+import Image from "next/image";
 
 type Field = {
   fieldName: string;
@@ -75,7 +76,7 @@ const LoginPage = () => {
             },
           }}
         >
-          <img
+          <Image
             src={LoginImage.src}
             alt="login image"
             style={{ width: "100%", height: "auto" }}
