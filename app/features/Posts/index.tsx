@@ -6,7 +6,7 @@ import { fetcher } from "@/app/lib/fetcher";
 import { PostModel } from "@/app/foundations/Post/index.model";
 import { PostProps } from "@/app/lib/data/DataContextProvider";
 import { Props as LatestPostProps } from "@/app/foundations/Post/index.d";
-import { compareDates } from "@/app/lib/utils";
+import { compareDates, truncateText } from "@/app/lib/utils";
 import useData from "@/app/lib/data/DataContextProvider";
 
 const Posts = () => {
@@ -15,7 +15,8 @@ const Posts = () => {
     if (!posts) return;
     return posts.sort(compareDates)[posts.length - 1];
   }, [posts]);
-  const postsToDisplay = useMemo(
+
+  const restPosts = useMemo(
     () => posts.filter((p) => p !== latest),
     [posts]
   );
@@ -31,7 +32,7 @@ const Posts = () => {
             },
           }}
         >
-          <Post {...PostModel.getProps(latest)} isNew />
+          <Post {...PostModel.getProps({...latest, description: truncateText(latest.description, 50)})} isNew />
         </Box>
       )}
       <Grid
@@ -41,10 +42,11 @@ const Posts = () => {
           sm: 1,
         }}
       >
-        {postsToDisplay?.map((p: PostProps) => {
+        {restPosts?.map((p: PostProps) => {
+          const modifiedDescription = truncateText(p.description, 30);
           return (
             <Grid key={p.id} item xs={12} sm={6} md={4}>
-              <Post {...PostModel.getProps(p)} />
+              <Post {...PostModel.getProps({...p, description: modifiedDescription})} />
             </Grid>
           );
         })}

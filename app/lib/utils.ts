@@ -7,3 +7,12 @@ export const compareDates = (
   
   return date1 - date2;
 }
+
+
+export function truncateText(text: string, maxLength: number): string {
+  if (text.length > maxLength) {
+      return text.slice(0, maxLength - 3) + "...";
+  } else {
+      return text;
+  }
+}

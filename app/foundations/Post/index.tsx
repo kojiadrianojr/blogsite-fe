@@ -27,7 +27,6 @@ const Component = (props: Props) => {
   // Match the 'owner'Id from the 'users' list;
   const { data: author } = useSWR(`/auth/users/${owner}`, fetcher);
   const isCurrUser = author?.username === currUser?.username;
-
   const handleEdit = () => {
     router.push(`/update/${id}`)
   }

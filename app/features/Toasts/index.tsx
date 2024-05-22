@@ -9,7 +9,7 @@ export const ToastContainerProvider = ({ children }: { children: any }) => {
       <ToastContainer
         position="top-right"
         autoClose={5000}
-        hideProgressBar={false}
+        hideProgressBar
         newestOnTop
         closeOnClick
         rtl={false}
