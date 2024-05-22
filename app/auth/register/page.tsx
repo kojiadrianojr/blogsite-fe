@@ -12,6 +12,7 @@ import NoSSR from "@/app/lib/NoSsr";
 import useToast from "@/app/features/Toasts";
 import Providers from "@/app/lib/Providers";
 import Image from "next/image";
+import { handleErrors } from "@/app/lib/utils";
 
 type Field = {
   fieldName: string;
@@ -117,6 +118,4 @@ export default function RenderPage() {
   );
 }
 
-export const handleErrors = (error: any) => {
-  return Object.values(error).join(",").split(",")[0];
-};
+
