@@ -49,8 +49,8 @@ const PostFields = (props: Props) => {
         sendSuccess(`Posted successfully! Redirecting...`);
         setTimeout(() => {
           setIsLoading(false);
+          router.push("/");
         }, 2000);
-        router.push("/");
       })
       .catch((e: any) => {
         console.error(`handleSend`, e);

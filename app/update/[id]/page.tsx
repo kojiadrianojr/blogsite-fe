@@ -18,19 +18,22 @@ const Page = ({ params }: { params: any }) => {
     return editPost({ ...data, id: params.id });
   };
 
-  const payload = useMemo(() => {
-    const post = posts.find((p) => p.id === parseInt(params.id));
-    return {
-      title: post?.title,
-      description: post?.description,
-      owner: currUser?.id,
-      action: handleAction,
-    };
-  }, [posts]);
+  const post = useMemo(() => {
+    return posts.find((p) => p.id === parseInt(params.id));
+  }, [posts, params.id]);
+
+  const payload = {
+    title: post?.title,
+    description: post?.description,
+    owner: currUser?.id,
+    action: handleAction,
+  };
 
   return (
     <Container maxWidth="sm" className="p-4">
-      <Typography variant="h5" gutterBottom>Editting your post, {currUser?.username}!</Typography>
+      <Typography variant="h5" gutterBottom>
+        Editting your post, {currUser?.username}!
+      </Typography>
       <PostFields {...PostFieldsModel.getProps(payload)} />
     </Container>
   );

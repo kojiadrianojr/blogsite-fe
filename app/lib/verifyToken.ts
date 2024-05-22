@@ -1,10 +1,10 @@
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import authActions from "../auth/utils";
 
 // Decode and validate access token
 export const isValidToken = (token: any) => {
   try {
-    const decodedToken = jwt.decode(token);
+    const decodedToken = jwt.decode(token) as JwtPayload;
     if (!decodedToken || !decodedToken.exp) {
       return false; // Token is invalid
     }
