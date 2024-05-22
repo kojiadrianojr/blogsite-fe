@@ -25,7 +25,7 @@ const PostFields = (props: Props) => {
       setDescription(props.description);
     }
     router.refresh();
-  }, [props.title, props.description]);
+  }, [props.title, props.description, router]);
 
   const handleCancel = () => {
     router.back();

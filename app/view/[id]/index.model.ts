@@ -12,12 +12,11 @@ export type Props = {
 export class PageModel {
   static getProps(props:Props): Props {
     const { title, description, owner, created } = props;
-    const { data: author } = useSWR(`/auth/users/${owner}`, fetcher);
     const modifiedDate = moment(created).calendar();
     return {
       title,
       description,
-      owner:author?.username,
+      owner:owner,
       created: modifiedDate,
     }
   }

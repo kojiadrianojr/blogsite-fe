@@ -15,7 +15,7 @@ const Page = () => {
   return (
     <Container maxWidth="sm" className="p-4">
       <Typography variant="h5" gutterBottom>
-        What's on your mind?
+        What&apos;s on your mind?
       </Typography>
       <PostFields
         {...PostFieldsModel.getProps({ action: sendPost, owner: currUser?.id })}

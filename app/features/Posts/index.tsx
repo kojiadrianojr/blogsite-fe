@@ -12,7 +12,7 @@ const Posts = () => {
     return posts.sort(compareDates)[posts.length - 1];
   }, [posts]);
 
-  const restPosts = useMemo(() => posts.filter((p) => p !== latest), [posts]);
+  const restPosts = useMemo(() => posts.filter((p) => p !== latest), [posts, latest]);
 
   return (
     <>
