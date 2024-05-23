@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BackspaceRounded,
   CloseRounded,
@@ -17,15 +17,17 @@ const PostFields = (props: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<string>("");
   const { sendSuccess, sendInfo } = useToast();
 
   useEffect(() => {
-    if (props.title && props.description) {
+    if (props.title && props.description && props.imageUrl) {
       setTitle(props.title);
       setDescription(props.description);
+      setImageUrl(props.imageUrl);
     }
     router.refresh();
-  }, [props.title, props.description, router]);
+  }, [props.title, props.description, props.imageUrl, router]);
 
   const handleCancel = () => {
     router.back();
@@ -38,11 +40,16 @@ const PostFields = (props: Props) => {
     setDescription(e.target.value);
   };
 
+  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImageUrl(e.target.value)
+  }
+
   const handleSend = () => {
     setIsLoading(true);
     action({
       owner,
       title,
+      imageUrl,
       description,
     })
       .then((res: any) => {
@@ -65,6 +72,13 @@ const PostFields = (props: Props) => {
     <div>
       <Box my="16px">
         <Field label="Title" onChange={handleTitleChange} value={title} />
+      </Box>
+      <Box my="8px">
+        <Field
+          value={imageUrl}
+          label="Image url"
+          onChange={handleImageUrlChange}
+        />
       </Box>
       <Box my="8px">
         <Field

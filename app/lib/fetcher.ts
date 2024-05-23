@@ -1,59 +1,45 @@
-import { protectedRoutes } from './../config';
 import authActions from "../auth/utils";
 import { API_URL } from "../config";
 import { isValidToken } from "./verifyToken";
-import { revalidate } from '../layout';
 
-const { handleJWTrefresh, storeToken, getToken } = authActions();
-export const fetcher = (url: string) => {
-  const urlLink: string = `${API_URL}${url}`;
+const { getToken, handleJWTrefresh, storeToken } = authActions();
+
+export const fetcher = async (url: string) => {
   const bearer: string = `Bearer ${getToken("access")}`;
-
-  // Check for refresh token;
-  if (isValidToken(getToken('refresh')) === false && isValidToken(getToken('access')) === false) {
-    return Promise.reject('No Refresh token found');
-  }
-
-  return fetch(urlLink, {
-    method: "GET",
-    headers: {
-      Authorization: bearer,
-      "Content-Type": "application/json",
-    },
-  })
-  .then(async (res) => {
+  const headers: HeadersInit = url.startsWith("/auth")
+    ? {
+        Authorization: bearer,
+        "Content-Type": "application/json",
+      }
+    : {
+        "Content-Type": "application/json",
+      };
+  const settings: RequestInit = {
+    method: "Get",
+    headers: headers,
+  };
+  const urlLink: string = `${API_URL}${url}`;
+  try {
+    const res = await fetch(urlLink, settings);
     if (res.status === 401) {
+      if (!isValidToken(getToken("refresh"))) {
+        return Promise.reject("Invalid refresh token");
+      }
       const { access } = (await handleJWTrefresh()) as { access: string };
       storeToken(access, "access");
-      return fetch(url, {
+      const resWithRetry = await fetch(urlLink, {
         headers: {
-          Authorization: `Bearer ${access}`,
-        }
-      }).then((res) => {
-        if (res.status === 401) {
-          if (protectedRoutes.includes(window.location.pathname)){
-            return window.location.replace(window.location.pathname)
-          }
-          return window.location.replace('/auth/login');
-        } else {
-          return res.json();
-        }
-      }).catch(e => {
-        if (protectedRoutes.includes(window.location.pathname)){
-          return window.location.replace(window.location.pathname)
-        }
-        return window.location.replace('/auth/login');
+          Authorzation: `Bearer ${access}`,
+        },
       });
+      if (resWithRetry.status === 401) {
+        return Promise.reject("Invalid Access and Refresh token!!!");
+      }
+      return resWithRetry.json();
     } else {
       return res.json();
     }
-  })
-  .catch(e => {
-    // if (protectedRoutes.includes(window.location.pathname)){
-    //   return window.location.replace(window.location.pathname)
-    // }
-    // return window.location.replace('/auth/login');
-    console.error('first catch', e);
-  });
-
+  } catch (e) {
+    console.error(`First catch: ${e}`);
+  }
 };

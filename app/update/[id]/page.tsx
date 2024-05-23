@@ -25,9 +25,12 @@ const Page = ({ params }: { params: any }) => {
   const payload = {
     title: post?.title,
     description: post?.description,
-    owner: currUser?.id,
+    imageUrl: post?.imageUrl,
+    owner: currUser?.username,
     action: handleAction,
   };
+
+  console.log(post)
 
   return (
     <Container maxWidth="sm" className="p-4">

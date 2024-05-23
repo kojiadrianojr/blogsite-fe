@@ -7,6 +7,7 @@ export type PostProps = {
   owner: string;
   title: string;
   description: string;
+  imageUrl: string;
   created: string;
 };
 
@@ -25,6 +26,7 @@ const initialState: DataContextProps = {
       title: "",
       description: "",
       created: "",
+      imageUrl: "",
     },
   ],
   setPosts: () => null,

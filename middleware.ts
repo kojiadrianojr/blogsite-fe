@@ -13,7 +13,7 @@ export function middleware(request: NextRequest) {
   
 
   if (protectedRoutes.includes(request.nextUrl.pathname) && (isAccessTokenValid === false && isRefreshTokenValid == false)) {
-    return NextResponse.redirect(new URL("/auth/login", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   if (authRoutes.includes(request.nextUrl.pathname) && (isAccessTokenValid === true || isRefreshTokenValid === true)) {
