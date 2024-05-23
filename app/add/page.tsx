@@ -18,7 +18,7 @@ const Page = () => {
         What&apos;s on your mind?
       </Typography>
       <PostFields
-        {...PostFieldsModel.getProps({ action: sendPost, owner: currUser?.id })}
+        {...PostFieldsModel.getProps({ action: sendPost, owner: currUser?.username })}
       />
     </Container>
   );

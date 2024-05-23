@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import FormComponent from "@/app/foundations/forms";
 import { FormModel } from "@/app/foundations/forms/index.model";
-import { Container, Paper, Typography } from "@mui/material";
+import { Container, IconButton, Paper, Typography } from "@mui/material";
 import Link from "next/link";
 import authActions from "../utils";
 import { useRouter } from "next/navigation";
@@ -12,6 +12,8 @@ import NoSSR from "@/app/lib/NoSsr";
 import useToast from "@/app/features/Toasts";
 import Providers from "@/app/lib/Providers";
 import Image from "next/image";
+import useAuth from "@/app/lib/auth/AuthContextProvider";
+import { ChevronLeftRounded } from "@mui/icons-material";
 
 type Field = {
   fieldName: string;
@@ -34,6 +36,7 @@ const FIELDS: Field[] = [
 
 const LoginPage = () => {
   const { login, storeToken } = authActions();
+  const { handleIsLoggedIn } = useAuth();
   const router = useRouter();
   const { sendError, sendSuccess } = useToast();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -44,6 +47,7 @@ const LoginPage = () => {
       .then((res) => {
         storeToken(res.access, "access");
         storeToken(res.refresh, "refresh");
+        handleIsLoggedIn(true);
         const msg = "Successfully Logged in!";
         sendSuccess(msg);
         router.push("/");
@@ -76,6 +80,9 @@ const LoginPage = () => {
             },
           }}
         >
+          <IconButton onClick={() => router.push("/")} color="success">
+            <ChevronLeftRounded />
+          </IconButton>
           <Image
             width={500}
             height={500}

@@ -11,8 +11,6 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Props } from "./index.d";
-import useSWR from "swr";
-import { fetcher } from "@/app/lib/fetcher";
 import useAuth from "@/app/lib/auth/AuthContextProvider";
 import { usePost } from "@/app/lib/hooks";
 import useData from "@/app/lib/data/DataContextProvider";
@@ -32,9 +30,8 @@ const Component = (props: Props) => {
     "Are you sure?",
     `Are you sure you want to delete "${title}"`
   );
-  // Match the 'owner'Id from the 'users' list;
-  const { data: author } = useSWR(`/auth/users/${owner}`, fetcher);
-  const isCurrUser = author?.username === currUser?.username;
+
+  const isCurrUser = owner === currUser?.username;
   const handleEdit = () => {
     router.push(`/update/${id}`);
   };
@@ -68,7 +65,7 @@ const Component = (props: Props) => {
           titleTypographyProps={{
             variant: isNew ? "h4" : "h5",
           }}
-          subheader={author?.username ?? owner}
+          subheader={owner}
         />
         <CardContent>
           <Typography color="text.secondary" variant="body2">

@@ -2,7 +2,6 @@
 
 import { Container } from "@mui/material";
 import dynamic from "next/dynamic";
-import Loader from "./foundations/Loader";
 import Providers from "./lib/Providers";
 import MainSkeleton, {
   AppBarSkeleton,

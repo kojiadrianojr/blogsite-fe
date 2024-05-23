@@ -1,6 +1,4 @@
-import { fetcher } from "@/app/lib/fetcher";
 import moment from "moment";
-import useSWR from "swr";
 
 export type Props = {
   title?: string;

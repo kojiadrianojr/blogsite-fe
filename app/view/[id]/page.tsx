@@ -36,18 +36,18 @@ const Page = ({ params }: { params: any }) => {
   const [stateDescription, setDescription] = useState<string>("");
   const router = useRouter();
   const { loading, setPosts } = useData();
-  const { currUser } = useAuth();
+  const { currUser, isLoggedIn } = useAuth();
   const { editPost, deletePost } = usePost();
   const { data: post } = useSWR(`/api/blog/${params.id}`, fetcher);
-  const { data: fetchedAuthor } = useSWR(`/auth/users/${post?.owner}`, fetcher);
+
   const data = {
     title: post?.title,
     description: post?.description,
-    owner: fetchedAuthor?.username,
+    owner: post?.owner,
     created: post?.created,
   };
   const { title, description, owner, created } = PageModel.getProps(data);
-  const author = owner ?? post?.owner;
+
   const [Dialog, confirm] = useDialog(
     "Are you sure?",
     `Are you sure you want to delete "${title}" ?`
@@ -107,7 +107,7 @@ const Page = ({ params }: { params: any }) => {
   };
 
   const authorized: boolean = currUser?.username === owner;
-
+  console.log(currUser)
   return (
     <>
       <Container maxWidth="md" disableGutters>
@@ -125,7 +125,7 @@ const Page = ({ params }: { params: any }) => {
           )}
 
           <Typography variant="subtitle2" gutterBottom>
-            {created} by {author}
+            {created} by {owner}
           </Typography>
         </Stack>
 

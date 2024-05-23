@@ -3,6 +3,7 @@
 import {
   AppBar,
   Box,
+  Button,
   Container,
   IconButton,
   ListItemIcon,
@@ -18,15 +19,16 @@ import authActions from "@/app/auth/utils";
 import { useRouter } from "next/navigation";
 import { isValidToken } from "@/app/lib/verifyToken";
 import useToast from "../Toasts";
+import useAuth from "@/app/lib/auth/AuthContextProvider";
 
 const Component = () => {
   const router = useRouter();
   const { sendSuccess } = useToast();
-  const { logout, removeTokens, getToken } = authActions();
+  const { isLoggedIn, handleIsLoggedIn, currUser } = useAuth();
+  const { logout, removeTokens } = authActions();
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
-
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -39,8 +41,9 @@ const Component = () => {
     logout()
       .then((res) => {
         removeTokens();
+        handleIsLoggedIn(false);
         sendSuccess("See you again!");
-        router.push("/auth/login");
+        router.refresh();
       })
       .catch((e) => console.error(e));
   };
@@ -67,37 +70,45 @@ const Component = () => {
           >
             PAPERS
           </Typography>
-          <Box>
-            <Tooltip title="user menu">
-              <IconButton
-                id="user-menu-button"
-                onClick={handleOpenUserMenu}
-                aria-controls={
-                  Boolean(anchorElUser) ? "user-options" : undefined
-                }
-                aria-haspopup={Boolean(anchorElUser) ? true : undefined}
-                aria-expanded={Boolean(anchorElUser) ? true : undefined}
+          {!isLoggedIn ? (
+            <Box>
+              <Button onClick={() => router.push("/auth/login")} variant="text">
+                Sign in!
+              </Button>
+            </Box>
+          ) : (
+            <Box>
+              <Tooltip title="user menu">
+                <IconButton
+                  id="user-menu-button"
+                  onClick={handleOpenUserMenu}
+                  aria-controls={
+                    Boolean(anchorElUser) ? "user-options" : undefined
+                  }
+                  aria-haspopup={Boolean(anchorElUser) ? true : undefined}
+                  aria-expanded={Boolean(anchorElUser) ? true : undefined}
+                >
+                  <PersonRounded />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                id="user-options"
+                anchorEl={anchorElUser}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+                MenuListProps={{
+                  "aria-labelledby": "user-menu-button",
+                }}
               >
-                <PersonRounded />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              id="user-options"
-              anchorEl={anchorElUser}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-              MenuListProps={{
-                "aria-labelledby": "user-menu-button",
-              }}
-            >
-              <MenuItem onClick={handleLogout}>
-                <ListItemIcon>
-                  <Logout fontSize="small" />
-                </ListItemIcon>
-                Logout
-              </MenuItem>
-            </Menu>
-          </Box>
+                <MenuItem onClick={handleLogout}>
+                  <ListItemIcon>
+                    <Logout fontSize="small" />
+                  </ListItemIcon>
+                  Logout
+                </MenuItem>
+              </Menu>
+            </Box>
+          )}
         </Toolbar>
       </Container>
     </AppBar>
