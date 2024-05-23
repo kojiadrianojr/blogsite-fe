@@ -68,6 +68,12 @@ const PostFields = (props: Props) => {
       </Box>
       <Box my="8px">
         <Field
+          value=""
+          label="Image url"
+        />
+      </Box>
+      <Box my="8px">
+        <Field
           label="Description"
           onChange={handleDescriptionChange}
           value={description}

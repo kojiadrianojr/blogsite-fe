@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import Post from "@/app/foundations/Post";
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { PostModel } from "@/app/foundations/Post/index.model";
 import { PostProps } from "@/app/lib/data/DataContextProvider";
 import { compareDates, truncateText } from "@/app/lib/utils";
@@ -21,7 +21,12 @@ const Posts = () => {
 
   if (!latest) {
     return (
-      <Grid container alignItems="center" justifyContent="center">
+      <Grid container alignItems="center" justifyContent="center" mt={10}>
+        <Grid item xs={12}>
+          <Typography className="text-center" variant="h4" fontWeight='400' fontFamily="monospace" gutterBottom>
+            Nothing to see here...
+          </Typography>
+        </Grid>
         <Grid item>
           <Image
             alt="Article image"

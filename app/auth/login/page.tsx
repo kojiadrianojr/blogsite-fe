@@ -50,8 +50,8 @@ const LoginPage = () => {
         handleIsLoggedIn(true);
         const msg = "Successfully Logged in!";
         sendSuccess(msg);
-        router.push("/");
         setTimeout(() => {
+          router.push("/");
           setIsLoading(false);
         }, 2000);
       })

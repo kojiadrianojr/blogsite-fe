@@ -59,14 +59,14 @@ const RegisterPage = () => {
         sendSuccess(msg);
         setTimeout(() => {
           setIsLoading(false);
-        }, 3000);
-        router.push("/auth/login");
+          router.push("/auth/login");
+        }, 2000);
       })
       .catch((e) => {
         console.error(e);
         setTimeout(() => {
           setIsLoading(false);
-        }, 3000);
+        }, 2000);
       });
   };
 
