@@ -180,7 +180,6 @@ const Page = ({ params }: { params: any }) => {
         >
           {!stateImageUrl.match(" ") && (
             <Box
-              onClick={() => setExpandImage(!expandImage)}
               sx={{
                 backgroundImage: `url(${stateImageUrl})`,
                 backgroundPosition: "center",
@@ -188,7 +187,7 @@ const Page = ({ params }: { params: any }) => {
                 backgroundRepeat: "no-repeat",
                 width: "100%",
                 height: {
-                  xs: expandImage ? 500 : 200,
+                  xs: expandImage ? 700 : 200,
                 },
                 display: "flex",
                 alignItems: "flex-start",
