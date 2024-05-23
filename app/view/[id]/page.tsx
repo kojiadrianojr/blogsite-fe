@@ -170,6 +170,15 @@ const Page = ({ params }: { params: any }) => {
             </div>
           )}
         </ButtonGroup>
+        {
+            edit && (
+              <Field 
+                label="Image url"
+                value={stateImageUrl}
+                onChange={handleImageUrlChange}
+              />
+            )
+          }
         <Card
           variant="outlined"
           sx={{

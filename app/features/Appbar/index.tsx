@@ -40,10 +40,12 @@ const Component = () => {
   const handleLogout = () => {
     logout()
       .then((res) => {
-        removeTokens();
-        handleIsLoggedIn(false);
         sendSuccess("See you again!");
-        router.refresh();
+        setTimeout(() => {
+          removeTokens();
+          handleIsLoggedIn(false);
+          router.refresh();
+        }, 2000)
       })
       .catch((e) => console.error(e));
   };
