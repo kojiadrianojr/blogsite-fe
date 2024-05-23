@@ -7,6 +7,7 @@ type PayloadProps = {
   owner?: string;
   title: string;
   description: string
+  imageUrl: string
 }
 
 
@@ -22,6 +23,7 @@ const editPost = async (payload:PayloadProps & {id: number}) => {
       },
       body: JSON.stringify({
         title: payload.title,
+        imageUrl: payload.imageUrl,
         description: payload.description,
         owner: payload.owner,
       })

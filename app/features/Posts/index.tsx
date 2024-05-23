@@ -64,7 +64,7 @@ const Posts = () => {
         {restPosts?.map((p: PostProps) => {
           const modifiedDescription = truncateText(p.description, 30);
           return (
-            <Grid key={p.id} item xs={12} sm={6} lg={4}>
+            <Grid key={p.id} item xs={12} sm={6}>
               <Post
                 {...PostModel.getProps({
                   ...p,

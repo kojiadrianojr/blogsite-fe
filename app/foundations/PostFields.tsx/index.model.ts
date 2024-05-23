@@ -2,9 +2,9 @@ import { Props } from "./index.d";
 
 export class PostFieldsModel {
   static getProps(props: Props): Props {
-    const { action, title, description, owner } = props;
+    const { action, title, description, owner, imageUrl } = props;
 
-    if (!title && !description) {
+    if (!title && !description && !imageUrl) {
       return {
         action,
         owner,
@@ -14,6 +14,7 @@ export class PostFieldsModel {
     return {
       action,
       title,
+      imageUrl,
       description,
       owner,
     };

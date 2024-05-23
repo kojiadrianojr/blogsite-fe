@@ -6,14 +6,18 @@ import {
   ChevronLeftRounded,
   DeleteRounded,
   EditRounded,
+  FullscreenExitRounded,
+  FullscreenRounded,
   SaveRounded,
 } from "@mui/icons-material";
 import {
+  Box,
   Button,
   ButtonGroup,
+  Card,
+  CardContent,
   Container,
   IconButton,
-  Paper,
   Stack,
   Typography,
 } from "@mui/material";
@@ -28,12 +32,15 @@ import useToast from "@/app/features/Toasts";
 import useDialog from "@/app/lib/dialog/useDialog";
 import useSWR from "swr";
 import { fetcher } from "@/app/lib/fetcher";
+import { isImage } from "@/app/lib/utils";
 
 const Page = ({ params }: { params: any }) => {
   const { sendError, sendSuccess, sendInfo } = useToast();
+  const [expandImage, setExpandImage] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
   const [stateTitle, setTitle] = useState<string>("");
   const [stateDescription, setDescription] = useState<string>("");
+  const [stateImageUrl, setImageUrl] = useState<string>("");
   const router = useRouter();
   const { loading, setPosts } = useData();
   const { currUser, isLoggedIn } = useAuth();
@@ -43,10 +50,12 @@ const Page = ({ params }: { params: any }) => {
   const data = {
     title: post?.title,
     description: post?.description,
+    imageUrl: post?.imageUrl,
     owner: post?.owner,
     created: post?.created,
   };
-  const { title, description, owner, created } = PageModel.getProps(data);
+  const { title, description, owner, created, imageUrl } =
+    PageModel.getProps(data);
 
   const [Dialog, confirm] = useDialog(
     "Are you sure?",
@@ -56,6 +65,7 @@ const Page = ({ params }: { params: any }) => {
     if (post) {
       setDescription(description ?? "");
       setTitle(title ?? "");
+      setImageUrl(imageUrl ?? "");
     }
   }, [post, description, title]);
 
@@ -91,10 +101,15 @@ const Page = ({ params }: { params: any }) => {
     setDescription(e.target.value);
   };
 
+  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImageUrl(e.target.value);
+  };
+
   const handleSave = () => {
     editPost({
       title: stateTitle,
       description: stateDescription,
+      imageUrl: stateImageUrl,
       id: params.id,
     })
       .then((res) => {
@@ -107,7 +122,6 @@ const Page = ({ params }: { params: any }) => {
   };
 
   const authorized: boolean = currUser?.username === owner;
-  console.log(currUser)
   return (
     <>
       <Container maxWidth="md" disableGutters>
@@ -156,32 +170,53 @@ const Page = ({ params }: { params: any }) => {
             </div>
           )}
         </ButtonGroup>
-        <Paper
+        <Card
+          variant="outlined"
           sx={{
-            p: {
-              xs: 2,
-              sm: 4,
-            },
             m: {
               xs: 1,
             },
           }}
         >
-          {edit ? (
-            <Field
-              label="Description"
-              value={stateDescription}
-              onChange={handleDescriptionChange}
-              multiline
-              rows={4}
-              variant="filled"
-            />
-          ) : (
-            <Typography variant="body1" gutterBottom>
-              {stateDescription}
-            </Typography>
+          {!stateImageUrl.match(" ") && (
+            <Box
+              onClick={() => setExpandImage(!expandImage)}
+              sx={{
+                backgroundImage: `url(${stateImageUrl})`,
+                backgroundPosition: "center",
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+                width: "100%",
+                height: {
+                  xs: expandImage ? 500 : 200,
+                },
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "flex-end",
+              }}
+            >
+              <IconButton onClick={() => setExpandImage(!expandImage)} color="info">
+                {expandImage ? <FullscreenExitRounded /> : <FullscreenRounded />}
+              </IconButton>
+            </Box>
           )}
-        </Paper>
+          <CardContent>
+            {edit ? (
+              <Field
+                label="Description"
+                value={stateDescription}
+                onChange={handleDescriptionChange}
+                multiline
+                rows={4}
+                variant="filled"
+              />
+            ) : (
+              <Typography variant="body1" gutterBottom>
+                {stateDescription}
+              </Typography>
+            )}
+          </CardContent>
+        </Card>
       </Container>
       {Dialog()}
     </>

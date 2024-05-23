@@ -6,6 +6,8 @@ import {
   CardActions,
   CardContent,
   CardHeader,
+  CardMedia,
+  Grid,
   IconButton,
   Typography,
 } from "@mui/material";
@@ -17,15 +19,18 @@ import useData from "@/app/lib/data/DataContextProvider";
 import { useRouter } from "next/navigation";
 import useDialog from "@/app/lib/dialog/useDialog";
 import useToast from "@/app/features/Toasts";
+import Image from "next/image";
+import { isImage } from "@/app/lib/utils";
+import zIndex from "@mui/material/styles/zIndex";
 
 const Component = (props: Props) => {
   const router = useRouter();
   const { currUser } = useAuth();
   const { deletePost } = usePost();
   const { setPosts } = useData();
-  const {sendSuccess, sendInfo} = useToast();
+  const { sendSuccess, sendInfo } = useToast();
 
-  const { id, title, description, created, owner, isNew } = props;
+  const { id, title, description, created, owner, isNew, imageUrl } = props;
   const [ConfirmationDialog, confirmDelete] = useDialog(
     "Are you sure?",
     `Are you sure you want to delete "${title}"`
@@ -44,62 +49,121 @@ const Component = (props: Props) => {
       setPosts((items: any) => items.filter((item: any) => item.id !== id));
       deletePost(id).then((res) => sendSuccess("Post deleted!"));
     } else {
-      sendInfo("Post deletion canceled!")
+      sendInfo("Post deletion canceled!");
     }
+  };
+  const backgroundSettings = isNew && {
+    position: "relative",
+    zIndex: 0,
+    "&::before": {
+      content: "''",
+      position: "absolute",
+      top: 0,
+      left: 0,
+      height: "100%",
+      width: "100%",
+      backgroundImage: `url(${imageUrl})`,
+      backgroundPosition: "center",
+      backgroundSize: "cover",
+      opacity: "0.8",
+      zIndex: -1,
+    },
+  };
+
+  const renderCardImage = async () => {
+    const isImageUrl = await isImage(imageUrl);
+    if (isImageUrl) {
+      return (
+        <CardMedia
+          component="img"
+          alt="card-media/image"
+          src={imageUrl}
+          sx={{
+            flex: "1 1 50%",
+            display: {
+              xs: 'none',
+              md: "flex",
+            },
+            height: "100%",
+            width: "100%",
+            objectFit: "cover",
+          }}
+        />
+      );
+    }
+    return <></>;
   };
 
   return (
     <>
       <Card
         sx={{
-          p: { xs: 0, md: 3 },
           height: "100%",
+          maxHeight: {
+           md: isNew? "30vh":"250px",
+          },
           display: "flex",
-          flexDirection: "column",
+          flexDirection: {
+            xs: "column",
+            md: "row",
+          },
+          ...backgroundSettings,
         }}
         variant={props.variant}
         raised={props.raised}
       >
-        <CardHeader
-          title={title}
-          titleTypographyProps={{
-            variant: isNew ? "h4" : "h5",
-          }}
-          subheader={owner}
-        />
-        <CardContent>
-          <Typography color="text.secondary" variant="body2">
-            {created}
-          </Typography>
-          <Typography variant={isNew ? "h5" : "body1"}>
-            {description}
-          </Typography>
-        </CardContent>
-        <CardActions disableSpacing sx={{ marginTop: "auto" }}>
-          {!isNew && isCurrUser && (
-            <Box className="w-full">
-              <IconButton
-                color="warning"
-                aria-label="delete post"
-                onClick={handleDelete}
+        <Box
+          display="flex"
+          flexDirection="column"
+          sx={{ flex: "3 0 60%", zIndex: 1, p: { xs: 0, md: 2 } }}
+        >
+          <CardHeader
+            title={title}
+            titleTypographyProps={{
+              variant: isNew ? "h4" : "h5",
+              color: "primary.main"
+            }}
+            subheader={owner}
+          />
+          <CardContent>
+            <Typography color="text.secondary" variant="body2">
+              {created}
+            </Typography>
+            <Typography variant={isNew ? "h5" : "body1"}>
+              {description}
+            </Typography>
+          </CardContent>
+          <CardActions disableSpacing sx={{mt: "auto"}}>
+            {!isNew && isCurrUser && (
+              <Box className="w-full">
+                <IconButton
+                  color="warning"
+                  aria-label="delete post"
+                  onClick={handleDelete}
+                >
+                  <DeleteRounded />
+                </IconButton>
+                <IconButton
+                  color="secondary"
+                  aria-label="edit post"
+                  onClick={handleEdit}
+                >
+                  <ModeEditRounded />
+                </IconButton>
+              </Box>
+            )}
+            <Box className="text-right w-full">
+              <Button
+                color="info"
+                className="text-nowrap"
+                onClick={handleContinueRead}
               >
-                <DeleteRounded />
-              </IconButton>
-              <IconButton
-                color="secondary"
-                aria-label="edit post"
-                onClick={handleEdit}
-              >
-                <ModeEditRounded />
-              </IconButton>
+                see more...
+              </Button>
             </Box>
-          )}
-          <Box className="text-right w-full">
-            <Button className="text-nowrap" onClick={handleContinueRead}>
-              Continue reading
-            </Button>
-          </Box>
-        </CardActions>
+          </CardActions>
+        </Box>
+        {!isNew && renderCardImage()}
       </Card>
       {ConfirmationDialog()}
     </>
