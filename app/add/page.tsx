@@ -11,7 +11,6 @@ import Providers from "../lib/Providers";
 const Page = () => {
   const { currUser } = useAuth();
   const { sendPost } = usePost();
-
   return (
     <Container maxWidth="sm" className="p-4">
       <Typography variant="h5" gutterBottom>

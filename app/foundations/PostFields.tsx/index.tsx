@@ -10,21 +10,34 @@ import { useRouter } from "next/navigation";
 import useToast from "@/app/features/Toasts";
 import { LoadingButton } from "@mui/lab";
 import Field from "./atoms/Field";
+import { sendError } from "next/dist/server/api-utils";
+import { validateFields } from "@/app/lib/utils";
 
 const PostFields = (props: Props) => {
   const { action, owner } = props;
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [imageUrl, setImageUrl] = useState<string>("");
+  const [fieldStates, setFieldState] = useState<{
+    title: string;
+    description: string;
+    imageUrl: string;
+    validation: any;
+  }>({
+    title: "",
+    description: "",
+    imageUrl: "",
+    validation: null,
+  });
   const { sendSuccess, sendInfo } = useToast();
 
   useEffect(() => {
     if (props.title && props.description && props.imageUrl) {
-      setTitle(props.title);
-      setDescription(props.description);
-      setImageUrl(props.imageUrl);
+      setFieldState({
+        ...fieldStates,
+        title: props.title,
+        description: props.description,
+        imageUrl: props.imageUrl,
+      });
     }
     router.refresh();
   }, [props.title, props.description, props.imageUrl, router]);
@@ -33,19 +46,13 @@ const PostFields = (props: Props) => {
     router.back();
   };
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setFieldState({ ...fieldStates, [`${e.target.name}`]: e.target.value });
   };
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDescription(e.target.value);
-  };
-
-  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setImageUrl(e.target.value)
-  }
 
   const handleSend = () => {
     setIsLoading(true);
+    const { title, imageUrl, description } = fieldStates;
     action({
       owner,
       title,
@@ -53,6 +60,12 @@ const PostFields = (props: Props) => {
       description,
     })
       .then((res: any) => {
+        if (!res.response.ok) {
+          setFieldState({ ...fieldStates, validation: res.info });
+          setIsLoading(false);
+          return;
+        }
+        setFieldState({...fieldStates, validation: null});
         sendSuccess(`Posted successfully! Redirecting...`);
         setTimeout(() => {
           setIsLoading(false);
@@ -67,26 +80,37 @@ const PostFields = (props: Props) => {
         }, 2000);
       });
   };
-
+  
   return (
     <div>
       <Box my="16px">
-        <Field label="Title" onChange={handleTitleChange} value={title} />
-      </Box>
-      <Box my="8px">
         <Field
-          value={imageUrl}
-          label="Image url"
-          onChange={handleImageUrlChange}
+          label="Title"
+          name="title"
+          onChange={handleOnChange}
+          value={fieldStates.title}
+          error={!!fieldStates.validation?.title}
+          helperText={fieldStates.validation?.title}
         />
       </Box>
       <Box my="8px">
         <Field
+          name="imageUrl"
+          value={fieldStates.imageUrl}
+          label="Image url"
+          onChange={handleOnChange}
+        />
+      </Box>
+      <Box my="8px">
+        <Field
+          name="description"
           label="Description"
-          onChange={handleDescriptionChange}
-          value={description}
+          onChange={handleOnChange}
+          value={fieldStates.description}
           multiline
           rows={4}
+          error={!!fieldStates.validation?.description}
+          helperText={fieldStates.validation?.description}
         />
       </Box>
       <ButtonGroup sx={{ my: "16px" }} variant="contained" size="small">
@@ -97,7 +121,6 @@ const PostFields = (props: Props) => {
         >
           Cancel
         </Button>
-        {/* <Button startIcon={<BackspaceRounded />}>Clear</Button> */}
         <LoadingButton
           loadingPosition="end"
           loading={isLoading}

@@ -32,15 +32,21 @@ import useToast from "@/app/features/Toasts";
 import useDialog from "@/app/lib/dialog/useDialog";
 import useSWR from "swr";
 import { fetcher } from "@/app/lib/fetcher";
-import { isImage } from "@/app/lib/utils";
+import { isImage, validateFields } from "@/app/lib/utils";
 
 const Page = ({ params }: { params: any }) => {
   const { sendError, sendSuccess, sendInfo } = useToast();
   const [expandImage, setExpandImage] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
-  const [stateTitle, setTitle] = useState<string>("");
-  const [stateDescription, setDescription] = useState<string>("");
-  const [stateImageUrl, setImageUrl] = useState<string>("");
+  const [fieldStates, setFieldStates] = useState<{
+    title?: string;
+    description?: string;
+    imageUrl?: string;
+  }>({
+    title: "",
+    imageUrl: "",
+    description: "",
+  });
   const router = useRouter();
   const { loading, setPosts } = useData();
   const { currUser, isLoggedIn } = useAuth();
@@ -63,9 +69,7 @@ const Page = ({ params }: { params: any }) => {
   );
   useEffect(() => {
     if (post) {
-      setDescription(description ?? "");
-      setTitle(title ?? "");
-      setImageUrl(imageUrl ?? "");
+      setFieldStates({ title, imageUrl, description });
     }
   }, [post, description, title]);
 
@@ -73,9 +77,8 @@ const Page = ({ params }: { params: any }) => {
     return <ViewSkeleton />;
   }
   const handleEdit = () => {
-    setTitle(title ?? "");
-    setDescription(description ?? "");
     setEdit(!edit);
+    setFieldStates({ title, imageUrl, description });
   };
 
   const handleDelete = async () => {
@@ -93,28 +96,24 @@ const Page = ({ params }: { params: any }) => {
     }
   };
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
-  };
-
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDescription(e.target.value);
-  };
-
-  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setImageUrl(e.target.value);
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setFieldStates({ ...fieldStates, [`${e.target.name}`]: e.target.value });
   };
 
   const handleSave = () => {
+    const emptyFields = validateFields(fieldStates);
+    const { title, description, imageUrl } = fieldStates;
     editPost({
-      title: stateTitle,
-      description: stateDescription,
-      imageUrl: stateImageUrl,
+      title: title ?? "",
+      description: description ?? "",
+      imageUrl: imageUrl ?? "",
       id: params.id,
     })
       .then((res) => {
-        setTitle(res.title);
-        setDescription(res.description);
+        console.log(res)
+        if (!res.ok) {
+          return sendError(`Please check: ${emptyFields.join(", ")}`);
+        }
         sendSuccess("Your post has been updated!");
         setEdit(false);
       })
@@ -129,12 +128,13 @@ const Page = ({ params }: { params: any }) => {
           {edit ? (
             <Field
               label="Title"
-              value={stateTitle}
-              onChange={handleTitleChange}
+              value={fieldStates.title ?? ""}
+              name="title"
+              onChange={handleOnChange}
             />
           ) : (
             <Typography variant="h5" gutterBottom className="underline">
-              {stateTitle}
+              {fieldStates.title}
             </Typography>
           )}
 
@@ -170,15 +170,14 @@ const Page = ({ params }: { params: any }) => {
             </div>
           )}
         </ButtonGroup>
-        {
-            edit && (
-              <Field 
-                label="Image url"
-                value={stateImageUrl}
-                onChange={handleImageUrlChange}
-              />
-            )
-          }
+        {edit && (
+          <Field
+            label="Image url"
+            name="imageUrl"
+            value={fieldStates.imageUrl ?? ""}
+            onChange={handleOnChange}
+          />
+        )}
         <Card
           variant="outlined"
           sx={{
@@ -187,10 +186,10 @@ const Page = ({ params }: { params: any }) => {
             },
           }}
         >
-          {!stateImageUrl.match(" ") && (
+          {fieldStates.imageUrl && (
             <Box
               sx={{
-                backgroundImage: `url(${stateImageUrl})`,
+                backgroundImage: `url(${fieldStates.imageUrl})`,
                 backgroundPosition: "center",
                 backgroundSize: "cover",
                 backgroundRepeat: "no-repeat",
@@ -203,8 +202,15 @@ const Page = ({ params }: { params: any }) => {
                 justifyContent: "flex-end",
               }}
             >
-              <IconButton onClick={() => setExpandImage(!expandImage)} color="info">
-                {expandImage ? <FullscreenExitRounded /> : <FullscreenRounded />}
+              <IconButton
+                onClick={() => setExpandImage(!expandImage)}
+                color="info"
+              >
+                {expandImage ? (
+                  <FullscreenExitRounded />
+                ) : (
+                  <FullscreenRounded />
+                )}
               </IconButton>
             </Box>
           )}
@@ -212,15 +218,15 @@ const Page = ({ params }: { params: any }) => {
             {edit ? (
               <Field
                 label="Description"
-                value={stateDescription}
-                onChange={handleDescriptionChange}
+                value={fieldStates.description ?? ""}
+                onChange={handleOnChange}
                 multiline
                 rows={4}
                 variant="filled"
               />
             ) : (
               <Typography variant="body1" gutterBottom>
-                {stateDescription}
+                {fieldStates.description}
               </Typography>
             )}
           </CardContent>

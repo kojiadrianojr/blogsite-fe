@@ -44,3 +44,14 @@ export const isImage = async(url:string) => {
     return false;
   }
 }
+
+export const validateFields = (payload: any) => {
+  const emptyFields: string[] = [];
+  Object.entries(payload).forEach((pl) => {
+    if (!pl[0].match(/imageUrl/) && pl[1] === "") {
+      emptyFields.push(pl[0]);
+    }
+  })
+
+  return emptyFields;
+}

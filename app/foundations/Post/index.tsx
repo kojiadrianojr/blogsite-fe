@@ -99,8 +99,11 @@ const Component = (props: Props) => {
       <Card
         sx={{
           height: "100%",
+          minHeight: {
+            md: "250px",
+          },
           maxHeight: {
-           md: isNew? "30vh":"250px",
+           md: isNew? "auto":"300px",
           },
           display: "flex",
           flexDirection: {
