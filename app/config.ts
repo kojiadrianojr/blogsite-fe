@@ -1,5 +1,5 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL;
-export const protectedRoutes = ["/add", "/update/"];
+export const protectedRoutes = ["/add", "/update"];
 export const authRoutes = ["/auth/login", "/auth/register"];
 export const delays = {
   auth: 1000,
@@ -26,7 +26,7 @@ export const notificationMessages: {[key in NotificationMessageType]:string} = {
   warning: "Be advised",
   confirmation: "Are you sure - ",
   delete: "was deleted!",
-  created: "was posted!",
+  created: "Successfully created!",
   update: "was updated!",
   cancel: "Operation canceled!",
 }

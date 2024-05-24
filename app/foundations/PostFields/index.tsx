@@ -39,7 +39,7 @@ const PostFields = (props: Props) => {
       });
     }
     router.refresh();
-  }, [props.title, props.description, props.imageUrl, router, fieldStates]);
+  }, [props.title, props.description, props.imageUrl, router]);
 
   const handleCancel = () => {
     router.back();

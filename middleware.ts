@@ -11,21 +11,22 @@ export function middleware(request: NextRequest) {
   const isAccessTokenValid = isValidToken(accessToken?.value);
   const isRefreshTokenValid = isValidToken(refreshToken?.value);
   
+  const isProtected = protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
 
-  if (protectedRoutes.includes(request.nextUrl.pathname) && (isAccessTokenValid === false && isRefreshTokenValid == false)) {
+  if (isProtected && (isAccessTokenValid === false && isRefreshTokenValid == false)) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  if (authRoutes.includes(request.nextUrl.pathname) && (isAccessTokenValid === true || isRefreshTokenValid === true)) {
-    if (protectedRoutes.includes(request.nextUrl.pathname)) {
-      return NextResponse.next();
-    }
-    return NextResponse.redirect(new URL("/", request.url));
-  }
+  // if (authRoutes.includes(request.nextUrl.pathname) && (isAccessTokenValid === true || isRefreshTokenValid === true)) {
+  //   if (protectedRoutes.includes(request.nextUrl.pathname)) {
+  //     return NextResponse.next();
+  //   }
+  //   return NextResponse.redirect(new URL("/", request.url));
+  // }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
+  matcher: ["/update/:path*","/((?!api|_next/static|_next/image|.*\\.png$).*)", ],
 };
