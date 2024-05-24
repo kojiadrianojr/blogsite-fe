@@ -14,6 +14,7 @@ import Providers from "@/app/lib/Providers";
 import Image from "next/image";
 import useAuth from "@/app/lib/auth/AuthContextProvider";
 import { ChevronLeftRounded } from "@mui/icons-material";
+import { fetchAppMessage, setDelayTimer } from "@/app/lib/utils";
 
 type Field = {
   fieldName: string;
@@ -35,11 +36,11 @@ const FIELDS: Field[] = [
 ];
 
 const LoginPage = () => {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { login, storeToken } = authActions();
   const { handleIsLoggedIn } = useAuth();
-  const router = useRouter();
-  const { sendError, sendSuccess } = useToast();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { sendWarn, sendSuccess } = useToast();
 
   const handleAction = (payload: any) => {
     setIsLoading(true);
@@ -48,22 +49,17 @@ const LoginPage = () => {
         storeToken(res.access, "access");
         storeToken(res.refresh, "refresh");
         handleIsLoggedIn(true);
-        const msg = "Successfully Logged in!";
+        const msg = fetchAppMessage("Logged In", "success");
         sendSuccess(msg);
-        setTimeout(() => {
-          router.push("/");
-          setIsLoading(false);
-        }, 2000);
+        setDelayTimer(router.push("/"));
+        setDelayTimer(setIsLoading(false));
       })
       .catch((e) => {
-        console.error({ status: e.status, msg: e.statusText });
-        if (e.status === 401) {
-          const msg = "Check your credentials!";
-          sendError(msg);
+        if (e.response.status === 401) {
+          const msg = fetchAppMessage(e.info.detail, "warning");
+          sendWarn(msg);
         }
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 2000);
+        setDelayTimer(setIsLoading(false));
       });
   };
 
