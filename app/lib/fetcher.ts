@@ -28,8 +28,9 @@ export const fetcher = async (url: string) => {
       const { access } = (await handleJWTrefresh()) as { access: string };
       storeToken(access, "access");
       const resWithRetry = await fetch(urlLink, {
+        method: "GET",
         headers: {
-          Authorzation: `Bearer ${access}`,
+          Authorization: `Bearer ${access}`,
           "Content-type": "application/json",
         },
       });
@@ -42,5 +43,6 @@ export const fetcher = async (url: string) => {
     }
   } catch (e) {
     console.error(`First catch: ${e}`);
+    throw e;
   }
 };
