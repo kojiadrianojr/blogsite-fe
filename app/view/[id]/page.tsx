@@ -33,7 +33,7 @@ import useDialog from "@/app/lib/dialog/DialogContextProvider";
 import useSWR from "swr";
 import { fetcher } from "@/app/lib/fetcher";
 import { isImage, validateFields } from "@/app/lib/utils";
-import { delays } from "@/app/config";
+import { delays, notificationMessages } from "@/app/config";
 
 const Page = ({ params }: { params: any }) => {
   const { sendError, sendSuccess, sendInfo } = useToast();
@@ -43,10 +43,12 @@ const Page = ({ params }: { params: any }) => {
     title?: string;
     description?: string;
     imageUrl?: string;
+    validation: any;
   }>({
     title: "",
     imageUrl: "",
     description: "",
+    validation: null,
   });
   const router = useRouter();
   const { loading, setPosts } = useData();
@@ -67,7 +69,7 @@ const Page = ({ params }: { params: any }) => {
   const { getConfirmation } = useDialog();
   useEffect(() => {
     if (post) {
-      setFieldStates({ title, imageUrl, description });
+      setFieldStates({...fieldStates, title, imageUrl, description });
     }
   }, [post, description, title, imageUrl]);
 
@@ -76,7 +78,7 @@ const Page = ({ params }: { params: any }) => {
   }
   const handleEdit = () => {
     setEdit(!edit);
-    setFieldStates({ title, imageUrl, description });
+    setFieldStates({...fieldStates, title, imageUrl, description });
   };
 
   const handleDelete = async () => {
@@ -101,7 +103,6 @@ const Page = ({ params }: { params: any }) => {
   };
 
   const handleSave = () => {
-    const emptyFields = validateFields(fieldStates);
     const { title, description, imageUrl } = fieldStates;
     editPost({
       title: title ?? "",
@@ -111,15 +112,17 @@ const Page = ({ params }: { params: any }) => {
     })
       .then((res) => {
         if (!res?.response.ok) {
-          return sendError(`Please check: ${emptyFields.join(", ")}`);
+          setFieldStates({ ...fieldStates, validation: res?.info})
+          return;
         }
-        sendSuccess("Your post has been updated!");
+        setFieldStates({ ...fieldStates, validation:null});
+        sendSuccess(`[ ${fieldStates.title} ] ${notificationMessages.update}`);
         setEdit(false);
       })
       .catch((e) => sendError("Failed to edit your post, try again..."));
-  };
+  }
 
-  const authorized: boolean = currUser?.username === owner;
+  const authorized: boolean = currUser?.username === owner && isLoggedIn;
   return (
     <>
       <Container maxWidth="md" disableGutters>
@@ -130,6 +133,8 @@ const Page = ({ params }: { params: any }) => {
               value={fieldStates.title ?? ""}
               name="title"
               onChange={handleOnChange}
+              error={!!fieldStates.validation?.title}
+              helperText={fieldStates.validation?.title}
             />
           ) : (
             <Typography variant="h5" gutterBottom className="underline">
@@ -222,6 +227,8 @@ const Page = ({ params }: { params: any }) => {
                 multiline
                 rows={4}
                 variant="filled"
+                error={!!fieldStates.validation?.description}
+                helperText={fieldStates.validation?.description}
               />
             ) : (
               <Typography variant="body1" gutterBottom>
