@@ -9,13 +9,13 @@ export const fetcher = async (url: string) => {
   const headers: HeadersInit = url.startsWith("/auth")
     ? {
         Authorization: bearer,
-        "Content-Type": "application/json",
+        "Content-type": "application/json",
       }
     : {
-        "Content-Type": "application/json",
-      };
+        "Content-type": "application/json",
+      }
   const settings: RequestInit = {
-    method: "Get",
+    method: "GET",
     headers: headers,
   };
   const urlLink: string = `${API_URL}${url}`;
@@ -23,13 +23,15 @@ export const fetcher = async (url: string) => {
     const res = await fetch(urlLink, settings);
     if (res.status === 401) {
       if (!isValidToken(getToken("refresh"))) {
-        return Promise.reject("Invalid refresh token");
+        return;
       }
       const { access } = (await handleJWTrefresh()) as { access: string };
       storeToken(access, "access");
       const resWithRetry = await fetch(urlLink, {
+        method: "GET",
         headers: {
-          Authorzation: `Bearer ${access}`,
+          Authorization: `Bearer ${access}`,
+          "Content-type": "application/json",
         },
       });
       if (resWithRetry.status === 401) {
@@ -41,5 +43,6 @@ export const fetcher = async (url: string) => {
     }
   } catch (e) {
     console.error(`First catch: ${e}`);
+    throw e;
   }
 };

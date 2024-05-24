@@ -1,7 +1,7 @@
 "use client";
 
-import PostFields from "@/app/foundations/PostFields.tsx";
-import { PostFieldsModel } from "@/app/foundations/PostFields.tsx/index.model";
+import PostFields from "@/app/foundations/PostFields";
+import { PostFieldsModel } from "@/app/foundations/PostFields/index.model";
 import Providers from "@/app/lib/Providers";
 import useAuth from "@/app/lib/auth/AuthContextProvider";
 import useData from "@/app/lib/data/DataContextProvider";
@@ -29,8 +29,6 @@ const Page = ({ params }: { params: any }) => {
     owner: currUser?.username,
     action: handleAction,
   };
-
-  console.log(post)
 
   return (
     <Container maxWidth="sm" className="p-4">

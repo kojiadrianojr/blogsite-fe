@@ -98,7 +98,11 @@ const login = async (payload: { username: string; password: string }) => {
     if (res.ok) {
       return res.json();
     }
-    return Promise.reject(res);
+    const details = {
+      response: res,
+      info: await (res.json())
+    }
+    return Promise.reject(details);
   } catch (e) {
     console.error(e);
   }

@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { isValidToken } from "@/app/lib/verifyToken";
 import useToast from "../Toasts";
 import useAuth from "@/app/lib/auth/AuthContextProvider";
+import { delays } from "@/app/config";
 
 const Component = () => {
   const router = useRouter();
@@ -45,7 +46,7 @@ const Component = () => {
           removeTokens();
           handleIsLoggedIn(false);
           router.refresh();
-        }, 2000)
+        }, delays.auth)
       })
       .catch((e) => console.error(e));
   };
@@ -62,7 +63,7 @@ const Component = () => {
             href="/"
             sx={{
               mr: 2,
-              fontFamily: "monospace",
+              fontFamily: "Major Mono Display",
               fontWeight: 700,
               letterSpacing: ".3rem",
               color: "inherit",

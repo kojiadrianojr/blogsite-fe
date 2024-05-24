@@ -31,16 +31,27 @@ export const handleErrors = (error: any) => {
   return Object.values(error).join(",").split(",")[0];
 };
 
-export const isImage = async(url:string) => {
+export const isImage = async (url: string) => {
   try {
     const response = await fetch(url);
     if (response.ok) {
-      const contentType = response.headers.get('content-type');
-      return contentType?.startsWith('image/');
+      const contentType = response.headers.get("content-type");
+      return contentType?.startsWith("image/");
     }
     return false;
   } catch (error) {
-    console.error('Error verifying image:', error);
+    console.error("Error verifying image:", error);
     return false;
   }
-}
+};
+
+export const validateFields = (payload: any) => {
+  const emptyFields: string[] = [];
+  Object.entries(payload).forEach((pl) => {
+    if (!pl[0].match(/imageUrl/) && pl[1] === "") {
+      emptyFields.push(pl[0]);
+    }
+  });
+
+  return emptyFields;
+};

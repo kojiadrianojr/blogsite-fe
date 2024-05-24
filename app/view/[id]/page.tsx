@@ -19,6 +19,7 @@ import {
   Container,
   IconButton,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
@@ -26,21 +27,30 @@ import { PageModel } from "./index.model";
 import { useRouter } from "next/navigation";
 import useAuth from "@/app/lib/auth/AuthContextProvider";
 import { ViewSkeleton } from "@/app/features/Skeleton";
-import Field from "@/app/foundations/PostFields.tsx/atoms/Field";
+import Field from "@/app/foundations/PostFields/atoms/Field";
 import { usePost } from "@/app/lib/hooks";
 import useToast from "@/app/features/Toasts";
-import useDialog from "@/app/lib/dialog/useDialog";
+import useDialog from "@/app/lib/dialog/DialogContextProvider";
 import useSWR from "swr";
 import { fetcher } from "@/app/lib/fetcher";
-import { isImage } from "@/app/lib/utils";
+import { isImage, validateFields } from "@/app/lib/utils";
+import { delays, notificationMessages } from "@/app/config";
 
 const Page = ({ params }: { params: any }) => {
   const { sendError, sendSuccess, sendInfo } = useToast();
   const [expandImage, setExpandImage] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
-  const [stateTitle, setTitle] = useState<string>("");
-  const [stateDescription, setDescription] = useState<string>("");
-  const [stateImageUrl, setImageUrl] = useState<string>("");
+  const [fieldStates, setFieldStates] = useState<{
+    title?: string;
+    description?: string;
+    imageUrl?: string;
+    validation: any;
+  }>({
+    title: "",
+    imageUrl: "",
+    description: "",
+    validation: null,
+  });
   const router = useRouter();
   const { loading, setPosts } = useData();
   const { currUser, isLoggedIn } = useAuth();
@@ -57,71 +67,63 @@ const Page = ({ params }: { params: any }) => {
   const { title, description, owner, created, imageUrl } =
     PageModel.getProps(data);
 
-  const [Dialog, confirm] = useDialog(
-    "Are you sure?",
-    `Are you sure you want to delete "${title}" ?`
-  );
+  const { getConfirmation } = useDialog();
   useEffect(() => {
     if (post) {
-      setDescription(description ?? "");
-      setTitle(title ?? "");
-      setImageUrl(imageUrl ?? "");
+      setFieldStates({...fieldStates, title, imageUrl, description });
     }
-  }, [post, description, title]);
+  }, [post, description, title, imageUrl]);
 
   if (loading) {
     return <ViewSkeleton />;
   }
   const handleEdit = () => {
-    setTitle(title ?? "");
-    setDescription(description ?? "");
     setEdit(!edit);
+    setFieldStates({...fieldStates, title, imageUrl, description });
   };
 
   const handleDelete = async () => {
-    const userResponse = await confirm();
+    const userResponse = await getConfirmation(
+      `Are you sure you want to delete [title: ${title}] ?`
+    );
     if (userResponse) {
       setPosts((items: any) =>
         items.filter((item: any) => item.id !== params.id)
       );
       deletePost(params.id).then(() => {
-        sendSuccess("Post Delete!");
-        setTimeout(() => router.back(), 1000);
+        sendSuccess(`Post [title: ${title}] was deleted!`);
+        setTimeout(() => router.back(), delays.post);
       });
     } else {
       sendInfo("Operation canceled");
     }
   };
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
-  };
-
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDescription(e.target.value);
-  };
-
-  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setImageUrl(e.target.value);
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setFieldStates({ ...fieldStates, [`${e.target.name}`]: e.target.value });
   };
 
   const handleSave = () => {
+    const { title, description, imageUrl } = fieldStates;
     editPost({
-      title: stateTitle,
-      description: stateDescription,
-      imageUrl: stateImageUrl,
+      title: title ?? "",
+      description: description ?? "",
+      imageUrl: imageUrl ?? "",
       id: params.id,
     })
       .then((res) => {
-        setTitle(res.title);
-        setDescription(res.description);
-        sendSuccess("Your post has been updated!");
+        if (!res?.response.ok) {
+          setFieldStates({ ...fieldStates, validation: res?.info})
+          return;
+        }
+        setFieldStates({ ...fieldStates, validation:null});
+        sendSuccess(`[ ${fieldStates.title} ] ${notificationMessages.update}`);
         setEdit(false);
       })
       .catch((e) => sendError("Failed to edit your post, try again..."));
-  };
+  }
 
-  const authorized: boolean = currUser?.username === owner;
+  const authorized: boolean = currUser?.username === owner && isLoggedIn;
   return (
     <>
       <Container maxWidth="md" disableGutters>
@@ -129,12 +131,15 @@ const Page = ({ params }: { params: any }) => {
           {edit ? (
             <Field
               label="Title"
-              value={stateTitle}
-              onChange={handleTitleChange}
+              value={fieldStates.title ?? ""}
+              name="title"
+              onChange={handleOnChange}
+              error={!!fieldStates.validation?.title}
+              helperText={fieldStates.validation?.title}
             />
           ) : (
             <Typography variant="h5" gutterBottom className="underline">
-              {stateTitle}
+              {fieldStates.title}
             </Typography>
           )}
 
@@ -170,27 +175,26 @@ const Page = ({ params }: { params: any }) => {
             </div>
           )}
         </ButtonGroup>
-        {
-            edit && (
-              <Field 
-                label="Image url"
-                value={stateImageUrl}
-                onChange={handleImageUrlChange}
-              />
-            )
-          }
+        {edit && (
+          <Field
+            label="Image url"
+            name="imageUrl"
+            value={fieldStates.imageUrl ?? ""}
+            onChange={handleOnChange}
+          />
+        )}
         <Card
-          variant="outlined"
+          raised
           sx={{
             m: {
               xs: 1,
             },
           }}
         >
-          {!stateImageUrl.match(" ") && (
+          {fieldStates.imageUrl && (
             <Box
               sx={{
-                backgroundImage: `url(${stateImageUrl})`,
+                backgroundImage: `url(${fieldStates.imageUrl})`,
                 backgroundPosition: "center",
                 backgroundSize: "cover",
                 backgroundRepeat: "no-repeat",
@@ -203,30 +207,40 @@ const Page = ({ params }: { params: any }) => {
                 justifyContent: "flex-end",
               }}
             >
-              <IconButton onClick={() => setExpandImage(!expandImage)} color="info">
-                {expandImage ? <FullscreenExitRounded /> : <FullscreenRounded />}
+              <Tooltip title={!expandImage? "Maximize" : "Minimize"}>
+              <IconButton
+                onClick={() => setExpandImage(!expandImage)}
+                color="info"
+              >
+                {expandImage ? (
+                  <FullscreenExitRounded />
+                ) : (
+                  <FullscreenRounded />
+                )}
               </IconButton>
+              </Tooltip>
             </Box>
           )}
           <CardContent>
             {edit ? (
               <Field
                 label="Description"
-                value={stateDescription}
-                onChange={handleDescriptionChange}
+                value={fieldStates.description ?? ""}
+                onChange={handleOnChange}
                 multiline
                 rows={4}
                 variant="filled"
+                error={!!fieldStates.validation?.description}
+                helperText={fieldStates.validation?.description}
               />
             ) : (
               <Typography variant="body1" gutterBottom>
-                {stateDescription}
+                {fieldStates.description}
               </Typography>
             )}
           </CardContent>
         </Card>
       </Container>
-      {Dialog()}
     </>
   );
 };

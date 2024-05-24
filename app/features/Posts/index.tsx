@@ -24,7 +24,7 @@ const Posts = () => {
       <Grid container alignItems="center" justifyContent="center" mt={10}>
         <Grid item xs={12}>
           <Typography className="text-center" variant="h4" fontWeight='400' fontFamily="monospace" gutterBottom>
-            Nothing to see here...
+            Create the first post, join now...
           </Typography>
         </Grid>
         <Grid item>
@@ -58,7 +58,7 @@ const Posts = () => {
         container
         spacing={{
           xs: 2,
-          sm: 1,
+          sm: 3,
         }}
       >
         {restPosts?.map((p: PostProps) => {
@@ -70,7 +70,7 @@ const Posts = () => {
                   ...p,
                   description: modifiedDescription,
                 })}
-                variant="outlined"
+                variant="elevation"
               />
             </Grid>
           );

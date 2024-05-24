@@ -28,7 +28,10 @@ const editPost = async (payload:PayloadProps & {id: number}) => {
         owner: payload.owner,
       })
     })
-    return res.json();
+    return {
+      response: res,
+      info: await (res.json()),
+    };
   } catch(e) {
     console.error(e);
   }
@@ -62,9 +65,17 @@ const sendPost = async(payload:PayloadProps) => {
         Authorization: bearer,
         "Content-type": "application/json"
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        title: payload.title,
+        description: payload.description,
+        imageUrl: payload.imageUrl,
+        owner: payload.owner,
+      })
     })
-    return res;
+    return {
+      response: res,
+      info: await res.json(),
+    };
   } catch (e) {
     console.error(e)
   }
