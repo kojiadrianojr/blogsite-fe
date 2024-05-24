@@ -29,7 +29,7 @@ import { ViewSkeleton } from "@/app/features/Skeleton";
 import Field from "@/app/foundations/PostFields.tsx/atoms/Field";
 import { usePost } from "@/app/lib/hooks";
 import useToast from "@/app/features/Toasts";
-import useDialog from "@/app/lib/dialog/useDialog";
+import useDialog from "@/app/lib/dialog/DialogContextProvider";
 import useSWR from "swr";
 import { fetcher } from "@/app/lib/fetcher";
 import { isImage, validateFields } from "@/app/lib/utils";
@@ -63,10 +63,7 @@ const Page = ({ params }: { params: any }) => {
   const { title, description, owner, created, imageUrl } =
     PageModel.getProps(data);
 
-  const [Dialog, confirm] = useDialog(
-    "Are you sure?",
-    `Are you sure you want to delete "${title}" ?`
-  );
+  const { getConfirmation } = useDialog();
   useEffect(() => {
     if (post) {
       setFieldStates({ title, imageUrl, description });
@@ -82,13 +79,15 @@ const Page = ({ params }: { params: any }) => {
   };
 
   const handleDelete = async () => {
-    const userResponse = await confirm();
+    const userResponse = await getConfirmation(
+      `Are you sure you want to delete [title: ${title}] ?`
+    );
     if (userResponse) {
       setPosts((items: any) =>
         items.filter((item: any) => item.id !== params.id)
       );
       deletePost(params.id).then(() => {
-        sendSuccess("Post Delete!");
+        sendSuccess(`Post [title: ${title}] was deleted!`);
         setTimeout(() => router.back(), 1000);
       });
     } else {
@@ -110,7 +109,7 @@ const Page = ({ params }: { params: any }) => {
       id: params.id,
     })
       .then((res) => {
-        console.log(res)
+        console.log(res);
         if (!res.ok) {
           return sendError(`Please check: ${emptyFields.join(", ")}`);
         }
@@ -232,7 +231,6 @@ const Page = ({ params }: { params: any }) => {
           </CardContent>
         </Card>
       </Container>
-      {Dialog()}
     </>
   );
 };

@@ -7,7 +7,6 @@ import {
   CardContent,
   CardHeader,
   CardMedia,
-  Grid,
   IconButton,
   Typography,
 } from "@mui/material";
@@ -17,11 +16,9 @@ import useAuth from "@/app/lib/auth/AuthContextProvider";
 import { usePost } from "@/app/lib/hooks";
 import useData from "@/app/lib/data/DataContextProvider";
 import { useRouter } from "next/navigation";
-import useDialog from "@/app/lib/dialog/useDialog";
+import useDialog from "@/app/lib/dialog/DialogContextProvider";
 import useToast from "@/app/features/Toasts";
-import Image from "next/image";
 import { isImage } from "@/app/lib/utils";
-import zIndex from "@mui/material/styles/zIndex";
 
 const Component = (props: Props) => {
   const router = useRouter();
@@ -31,10 +28,7 @@ const Component = (props: Props) => {
   const { sendSuccess, sendInfo } = useToast();
 
   const { id, title, description, created, owner, isNew, imageUrl } = props;
-  const [ConfirmationDialog, confirmDelete] = useDialog(
-    "Are you sure?",
-    `Are you sure you want to delete "${title}"`
-  );
+  const { getConfirmation } = useDialog();
 
   const isCurrUser = owner === currUser?.username;
   const handleEdit = () => {
@@ -44,12 +38,17 @@ const Component = (props: Props) => {
     router.push(`/view/${id}`);
   };
   const handleDelete = async () => {
-    const userResponse = await confirmDelete();
+    const userResponse = await getConfirmation(
+      `Are you sure you want to delete [title: ${title}]`
+    );
+
     if (userResponse) {
       setPosts((items: any) => items.filter((item: any) => item.id !== id));
-      deletePost(id).then((res) => sendSuccess("Post deleted!"));
+      deletePost(id).then((res) =>
+        sendSuccess(`Post [title: ${title}] was deleted`)
+      );
     } else {
-      sendInfo("Post deletion canceled!");
+      sendInfo("Operation canceled");
     }
   };
   const backgroundSettings = isNew && {
@@ -81,7 +80,7 @@ const Component = (props: Props) => {
           sx={{
             flex: "1 1 50%",
             display: {
-              xs: 'none',
+              xs: "none",
               md: "flex",
             },
             height: "100%",
@@ -103,7 +102,7 @@ const Component = (props: Props) => {
             md: "250px",
           },
           maxHeight: {
-           md: isNew? "auto":"300px",
+            md: isNew ? "auto" : "300px",
           },
           display: "flex",
           flexDirection: {
@@ -124,19 +123,19 @@ const Component = (props: Props) => {
             title={title}
             titleTypographyProps={{
               variant: isNew ? "h4" : "h5",
-              color: "primary.main"
+              color: "primary.main",
             }}
             subheader={owner}
           />
           <CardContent>
-            <Typography color="text.secondary" variant="body2">
+            <Typography color="text.primary" variant="body2">
               {created}
             </Typography>
             <Typography variant={isNew ? "h5" : "body1"}>
               {description}
             </Typography>
           </CardContent>
-          <CardActions disableSpacing sx={{mt: "auto"}}>
+          <CardActions disableSpacing sx={{ mt: "auto" }}>
             {!isNew && isCurrUser && (
               <Box className="w-full">
                 <IconButton
@@ -161,14 +160,13 @@ const Component = (props: Props) => {
                 className="text-nowrap"
                 onClick={handleContinueRead}
               >
-                see more...
+                Read More
               </Button>
             </Box>
           </CardActions>
         </Box>
         {!isNew && renderCardImage()}
       </Card>
-      {ConfirmationDialog()}
     </>
   );
 };
