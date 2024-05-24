@@ -19,6 +19,7 @@ import {
   Container,
   IconButton,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
@@ -183,7 +184,7 @@ const Page = ({ params }: { params: any }) => {
           />
         )}
         <Card
-          variant="outlined"
+          raised
           sx={{
             m: {
               xs: 1,
@@ -206,6 +207,7 @@ const Page = ({ params }: { params: any }) => {
                 justifyContent: "flex-end",
               }}
             >
+              <Tooltip title={!expandImage? "Maximize" : "Minimize"}>
               <IconButton
                 onClick={() => setExpandImage(!expandImage)}
                 color="info"
@@ -216,6 +218,7 @@ const Page = ({ params }: { params: any }) => {
                   <FullscreenRounded />
                 )}
               </IconButton>
+              </Tooltip>
             </Box>
           )}
           <CardContent>

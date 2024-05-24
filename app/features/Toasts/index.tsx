@@ -1,6 +1,6 @@
 import React from "react";
+import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 export const ToastContainerProvider = ({ children }: { children: any }) => {
   return (

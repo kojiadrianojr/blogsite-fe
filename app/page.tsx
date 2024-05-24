@@ -3,12 +3,11 @@
 import { Container } from "@mui/material";
 import dynamic from "next/dynamic";
 import Providers from "./lib/Providers";
-import MainSkeleton, {
+import {
   AppBarSkeleton,
   FiltersSkeleton,
   PostsSkeleton,
 } from "./features/Skeleton/";
-import useData from "./lib/data/DataContextProvider";
 
 const Appbar = dynamic(() => import("@/app/features/Appbar"), {
   loading: AppBarSkeleton,

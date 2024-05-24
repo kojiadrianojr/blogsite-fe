@@ -63,7 +63,7 @@ const Component = () => {
             href="/"
             sx={{
               mr: 2,
-              fontFamily: "monospace",
+              fontFamily: "Major Mono Display",
               fontWeight: 700,
               letterSpacing: ".3rem",
               color: "inherit",
