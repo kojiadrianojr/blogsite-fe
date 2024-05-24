@@ -13,7 +13,7 @@ import useToast from "@/app/features/Toasts";
 import Providers from "@/app/lib/Providers";
 import Image from "next/image";
 import { handleErrors } from "@/app/lib/utils";
-import { delays } from "@/app/config";
+import { delays, notificationMessages } from "@/app/config";
 
 type Field = {
   fieldName: string;
@@ -54,7 +54,7 @@ const RegisterPage = () => {
           setIsLoading(false);
           return;
         }
-        const msg = `User account: ${payload.username} created!`;
+        const msg = `${notificationMessages.success} ${payload.username} created!`;
         sendSuccess(msg);
         setTimeout(() => {
           setIsLoading(false);

@@ -35,7 +35,7 @@ export const DataContext = createContext(initialState);
 export const DataContextProvider = ({ children }: { children: any }) => {
   const { data } = useSWR("/api/blog", fetcher);
   const [loading, setLoading] = useState<boolean>(true);
-  const [posts, setPosts] = useState<PostProps[]>(initialState.posts);
+  const [posts, setPosts] = useState<PostProps[]>([{}] as PostProps[]);
 
   useEffect(() => {
     if (data) {
@@ -43,7 +43,7 @@ export const DataContextProvider = ({ children }: { children: any }) => {
       setPosts(data);
     }
   }, [data]);
-
+  
   return (
     <DataContext.Provider value={{ posts, setPosts, loading }}>
       {children}

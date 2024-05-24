@@ -4,8 +4,8 @@ import { Container, Typography } from "@mui/material";
 import React from "react";
 import useAuth from "../lib/auth/AuthContextProvider";
 import { usePost } from "../lib/hooks";
-import PostFields from "../foundations/PostFields.tsx";
-import { PostFieldsModel } from "../foundations/PostFields.tsx/index.model";
+import PostFields from "../foundations/PostFields";
+import { PostFieldsModel } from "../foundations/PostFields/index.model";
 import Providers from "../lib/Providers";
 
 const Page = () => {

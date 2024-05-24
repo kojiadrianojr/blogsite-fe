@@ -9,6 +9,28 @@ export const DialogContext = createContext<DialogContextType>(
   {} as DialogContextType
 );
 
+const DialogBox = ({
+  promise,
+  title,
+  handleConfirm,
+  handleCancel,
+}: {
+  promise: any;
+  title: string;
+  handleConfirm: () => void;
+  handleCancel: () => void;
+}) => {
+  return (
+    <Dialog open={promise !== null} fullWidth>
+      <DialogContent>{title}</DialogContent>
+      <DialogActions>
+        <Button onClick={handleConfirm}>Yes</Button>
+        <Button onClick={handleCancel}>No</Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
 export const DialogContextProvider = ({
   children,
 }: {
@@ -28,17 +50,6 @@ export const DialogContextProvider = ({
     promise?.resolve(false);
   };
 
-  const DialogBox = (title: string) => {
-    return (
-      <Dialog open={promise !== null} fullWidth>
-        <DialogContent>{title}</DialogContent>
-        <DialogActions>
-          <Button onClick={handleConfirm}>Yes</Button>
-          <Button onClick={handleCancel}>No</Button>
-        </DialogActions>
-      </Dialog>
-    );
-  };
   return (
     <DialogContext.Provider
       value={{
@@ -46,7 +57,12 @@ export const DialogContextProvider = ({
         messageRef,
       }}
     >
-      {DialogBox(messageRef.current)}
+      <DialogBox
+        title={messageRef.current}
+        handleConfirm={handleConfirm}
+        handleCancel={handleCancel}
+        promise={promise}
+      />
       {children}
     </DialogContext.Provider>
   );

@@ -26,13 +26,14 @@ import { PageModel } from "./index.model";
 import { useRouter } from "next/navigation";
 import useAuth from "@/app/lib/auth/AuthContextProvider";
 import { ViewSkeleton } from "@/app/features/Skeleton";
-import Field from "@/app/foundations/PostFields.tsx/atoms/Field";
+import Field from "@/app/foundations/PostFields/atoms/Field";
 import { usePost } from "@/app/lib/hooks";
 import useToast from "@/app/features/Toasts";
 import useDialog from "@/app/lib/dialog/DialogContextProvider";
 import useSWR from "swr";
 import { fetcher } from "@/app/lib/fetcher";
 import { isImage, validateFields } from "@/app/lib/utils";
+import { delays } from "@/app/config";
 
 const Page = ({ params }: { params: any }) => {
   const { sendError, sendSuccess, sendInfo } = useToast();
@@ -68,7 +69,7 @@ const Page = ({ params }: { params: any }) => {
     if (post) {
       setFieldStates({ title, imageUrl, description });
     }
-  }, [post, description, title]);
+  }, [post, description, title, imageUrl]);
 
   if (loading) {
     return <ViewSkeleton />;
@@ -88,7 +89,7 @@ const Page = ({ params }: { params: any }) => {
       );
       deletePost(params.id).then(() => {
         sendSuccess(`Post [title: ${title}] was deleted!`);
-        setTimeout(() => router.back(), 1000);
+        setTimeout(() => router.back(), delays.post);
       });
     } else {
       sendInfo("Operation canceled");
@@ -109,8 +110,7 @@ const Page = ({ params }: { params: any }) => {
       id: params.id,
     })
       .then((res) => {
-        console.log(res);
-        if (!res.ok) {
+        if (!res?.response.ok) {
           return sendError(`Please check: ${emptyFields.join(", ")}`);
         }
         sendSuccess("Your post has been updated!");

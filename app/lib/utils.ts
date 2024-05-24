@@ -1,5 +1,3 @@
-import { MessageType, messages } from "../config";
-
 export const compareDates = (
   arg1: { [key: string]: any },
   arg2: { [key: string]: any }
@@ -56,9 +54,4 @@ export const validateFields = (payload: any) => {
   });
 
   return emptyFields;
-};
-
-export const fetchAppMessage = (msg: string, type: MessageType) => {
-  const message = messages[type] + ":" + msg;
-  return message;
 };

@@ -10,8 +10,7 @@ import { useRouter } from "next/navigation";
 import useToast from "@/app/features/Toasts";
 import { LoadingButton } from "@mui/lab";
 import Field from "./atoms/Field";
-import { sendError } from "next/dist/server/api-utils";
-import { validateFields } from "@/app/lib/utils";
+import { NotificationMessageType, delays, notificationMessages } from "@/app/config";
 
 const PostFields = (props: Props) => {
   const { action, owner } = props;
@@ -40,7 +39,7 @@ const PostFields = (props: Props) => {
       });
     }
     router.refresh();
-  }, [props.title, props.description, props.imageUrl, router]);
+  }, [props.title, props.description, props.imageUrl, router, fieldStates]);
 
   const handleCancel = () => {
     router.back();
@@ -65,19 +64,20 @@ const PostFields = (props: Props) => {
           setIsLoading(false);
           return;
         }
+      
         setFieldState({...fieldStates, validation: null});
-        sendSuccess(`Posted successfully! Redirecting...`);
+        sendSuccess(notificationMessages[res.response.statusText.toLowerCase() as NotificationMessageType]);
         setTimeout(() => {
           setIsLoading(false);
           router.push("/");
-        }, 2000);
+        }, delays.post);
       })
       .catch((e: any) => {
         console.error(`handleSend`, e);
-        sendInfo("Error found, please retry...");
+        sendInfo(notificationMessages.error);
         setTimeout(() => {
           setIsLoading(false);
-        }, 2000);
+        }, delays.post);
       });
   };
   

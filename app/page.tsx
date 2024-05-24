@@ -18,14 +18,11 @@ const Filters = dynamic(() => import("./features/Filters"), {
 });
 const Posts = dynamic(() => import("./features/Posts"), {
   loading: PostsSkeleton,
+  ssr: true,
 });
 
 function Home() {
-  const { loading } = useData();
-  if (loading) {
-    return <MainSkeleton />
-  }
-  
+
   return (
     <Container fixed disableGutters>
       <Appbar />

@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import useDialog from "@/app/lib/dialog/DialogContextProvider";
 import useToast from "@/app/features/Toasts";
 import { isImage } from "@/app/lib/utils";
+import { notificationMessages } from "@/app/config";
 
 const Component = (props: Props) => {
   const router = useRouter();
@@ -39,16 +40,15 @@ const Component = (props: Props) => {
   };
   const handleDelete = async () => {
     const userResponse = await getConfirmation(
-      `Are you sure you want to delete [title: ${title}]`
+      notificationMessages.confirmation + ` to delete [${title}]?`
     );
-
     if (userResponse) {
       setPosts((items: any) => items.filter((item: any) => item.id !== id));
       deletePost(id).then((res) =>
-        sendSuccess(`Post [title: ${title}] was deleted`)
+        sendSuccess(title + " " + notificationMessages.delete)
       );
     } else {
-      sendInfo("Operation canceled");
+      sendInfo(notificationMessages.cancel);
     }
   };
   const backgroundSettings = isNew && {

@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 3600;
+export const fetchCache = 'force-cache';
 
 export default function RootLayout({
   children,
