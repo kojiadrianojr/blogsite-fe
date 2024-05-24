@@ -58,7 +58,7 @@ const Posts = () => {
         container
         spacing={{
           xs: 2,
-          sm: 1,
+          sm: 3,
         }}
       >
         {restPosts?.map((p: PostProps) => {
@@ -70,7 +70,7 @@ const Posts = () => {
                   ...p,
                   description: modifiedDescription,
                 })}
-                variant="outlined"
+                variant="elevation"
               />
             </Grid>
           );
