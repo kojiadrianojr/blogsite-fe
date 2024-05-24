@@ -13,6 +13,7 @@ import useToast from "@/app/features/Toasts";
 import Providers from "@/app/lib/Providers";
 import Image from "next/image";
 import { handleErrors } from "@/app/lib/utils";
+import { delays } from "@/app/config";
 
 type Field = {
   fieldName: string;
@@ -50,9 +51,7 @@ const RegisterPage = () => {
         if (!res?.ok) {
           const msg = `${handleErrors(res?.result)}`;
           sendWarn(msg);
-          setTimeout(() => {
-            setIsLoading(false);
-          }, 3000);
+          setIsLoading(false);
           return;
         }
         const msg = `User account: ${payload.username} created!`;
@@ -60,13 +59,10 @@ const RegisterPage = () => {
         setTimeout(() => {
           setIsLoading(false);
           router.push("/auth/login");
-        }, 2000);
+        }, delays.auth)
       })
       .catch((e) => {
-        console.error(e);
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 2000);
+        setTimeout(() => setIsLoading(false), delays.auth)
       });
   };
 

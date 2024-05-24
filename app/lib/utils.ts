@@ -1,4 +1,4 @@
-import { MessageType, delayTimer, messages } from "../config";
+import { MessageType, messages } from "../config";
 
 export const compareDates = (
   arg1: { [key: string]: any },
@@ -62,8 +62,3 @@ export const fetchAppMessage = (msg: string, type: MessageType) => {
   const message = messages[type] + ":" + msg;
   return message;
 };
-
-export const setDelayTimer = (callback: any, customDelay?: number) =>
-  setTimeout(() => {
-    callback;
-  }, customDelay ?? delayTimer);

@@ -14,7 +14,8 @@ import Providers from "@/app/lib/Providers";
 import Image from "next/image";
 import useAuth from "@/app/lib/auth/AuthContextProvider";
 import { ChevronLeftRounded } from "@mui/icons-material";
-import { fetchAppMessage, setDelayTimer } from "@/app/lib/utils";
+import { fetchAppMessage } from "@/app/lib/utils";
+import { delays } from "@/app/config";
 
 type Field = {
   fieldName: string;
@@ -51,15 +52,19 @@ const LoginPage = () => {
         handleIsLoggedIn(true);
         const msg = fetchAppMessage("Logged In", "success");
         sendSuccess(msg);
-        setDelayTimer(router.push("/"));
-        setDelayTimer(setIsLoading(false));
+        setTimeout(() => {
+          setIsLoading(false);
+          router.push("/");
+        }, delays.auth)
       })
       .catch((e) => {
         if (e.response.status === 401) {
           const msg = fetchAppMessage(e.info.detail, "warning");
           sendWarn(msg);
         }
-        setDelayTimer(setIsLoading(false));
+        setTimeout(() => {
+          setIsLoading(false)
+        }, delays.auth);
       });
   };
 
