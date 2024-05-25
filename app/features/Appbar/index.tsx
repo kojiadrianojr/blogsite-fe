@@ -46,7 +46,7 @@ const Component = () => {
           removeTokens();
           handleIsLoggedIn(false);
           router.refresh();
-        }, delays.auth)
+        }, delays.auth);
       })
       .catch((e) => console.error(e));
   };
@@ -82,7 +82,7 @@ const Component = () => {
           ) : (
             <Box>
               <Tooltip title="user menu">
-                <IconButton
+                <Button
                   id="user-menu-button"
                   onClick={handleOpenUserMenu}
                   aria-controls={
@@ -90,9 +90,10 @@ const Component = () => {
                   }
                   aria-haspopup={Boolean(anchorElUser) ? true : undefined}
                   aria-expanded={Boolean(anchorElUser) ? true : undefined}
+                  startIcon={<PersonRounded color="action"/>}
                 >
-                  <PersonRounded />
-                </IconButton>
+                  {currUser?.username}
+                </Button>
               </Tooltip>
               <Menu
                 id="user-options"
