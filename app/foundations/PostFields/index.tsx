@@ -28,14 +28,14 @@ const PostFields = (props: Props) => {
     validation: null,
   });
   const { sendSuccess, sendInfo } = useToast();
-
+  
   useEffect(() => {
-    if (props.title && props.description && props.imageUrl) {
+    if (props.title && props.description) {
       setFieldState({
         ...fieldStates,
         title: props.title,
         description: props.description,
-        imageUrl: props.imageUrl,
+        imageUrl: props.imageUrl ?? "",
       });
     }
     router.refresh();

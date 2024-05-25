@@ -49,7 +49,7 @@ const LoginPage = () => {
         storeToken(res.access, "access");
         storeToken(res.refresh, "refresh");
         handleIsLoggedIn(true);
-        const msg = notificationMessages.success +" :Logged in!";
+        const msg = notificationMessages.success +": Logged in!";
         sendSuccess(msg);
         setTimeout(() => {
           setIsLoading(false);
