@@ -128,6 +128,10 @@ const Page = ({ params }: { params: any }) => {
     <>
       <Container maxWidth="md" disableGutters>
         <Stack spacing={1} mt={4} mb={2} sx={{ p: { xs: 2 } }}>
+          
+        <Typography variant="subtitle2" gutterBottom>
+            {created} by {owner}
+          </Typography>
           {edit ? (
             <Field
               label="Title"
@@ -142,10 +146,14 @@ const Page = ({ params }: { params: any }) => {
               {fieldStates.title}
             </Typography>
           )}
-
-          <Typography variant="subtitle2" gutterBottom>
-            {created} by {owner}
-          </Typography>
+          {edit && (
+          <Field
+            label="Image url"
+            name="imageUrl"
+            value={fieldStates.imageUrl ?? ""}
+            onChange={handleOnChange}
+          />
+        )}
         </Stack>
 
         <ButtonGroup
@@ -175,14 +183,6 @@ const Page = ({ params }: { params: any }) => {
             </div>
           )}
         </ButtonGroup>
-        {edit && (
-          <Field
-            label="Image url"
-            name="imageUrl"
-            value={fieldStates.imageUrl ?? ""}
-            onChange={handleOnChange}
-          />
-        )}
         <Card
           raised
           sx={{
