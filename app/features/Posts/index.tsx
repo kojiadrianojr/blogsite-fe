@@ -22,11 +22,6 @@ const Posts = () => {
   if (!latest) {
     return (
       <Grid container alignItems="center" justifyContent="center" mt={10}>
-        <Grid item xs={12}>
-          <Typography className="text-center" variant="h4" fontWeight='400' fontFamily="monospace" gutterBottom>
-            Create the first post, join now...
-          </Typography>
-        </Grid>
         <Grid item>
           <Image
             alt="Article image"
